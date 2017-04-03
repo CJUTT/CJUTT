@@ -21,9 +21,6 @@
   <ItemGroup>
     <Text Include="in.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="E - Passwords%28AC%29.cpp" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3DAB8C96-CB21-4155-9AB4-3FFDBC6390F5}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>

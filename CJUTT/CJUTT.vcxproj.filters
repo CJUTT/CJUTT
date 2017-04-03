@@ -19,9 +19,4 @@
       <Filter>资源文件</Filter>
     </Text>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="E - Passwords%28AC%29.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-  </ItemGroup>
 </Project>
