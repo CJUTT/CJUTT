@@ -19,4 +19,9 @@
       <Filter>资源文件</Filter>
     </Text>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="2017.04.02\A - Within Arm%27s Reach(AC).cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
 </Project>
