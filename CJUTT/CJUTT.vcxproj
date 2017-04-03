@@ -18,6 +18,9 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="2017.04.02\H - Pascal%27s Hyper-Pyramids(AC).cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3DAB8C96-CB21-4155-9AB4-3FFDBC6390F5}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>

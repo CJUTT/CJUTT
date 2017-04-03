@@ -92,7 +92,6 @@ int main() {
 	char c;
 	int u, v;
 	while (~scanf("%d%d", &N, &M)) {
-		scanf("%d", &k);
 		z = 0;
 		tot[0] = 1;
 		MEM(dp[0][0].a, 0);
