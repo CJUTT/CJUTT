@@ -109,5 +109,5 @@ int main() {
 			//printf("%.3lf\n", Dis(d[i], d[i - 1]));
 		}
 	}
-	return 0;;;
+	return 0;
 }
