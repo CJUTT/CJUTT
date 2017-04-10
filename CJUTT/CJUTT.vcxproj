@@ -22,7 +22,7 @@
     <Text Include="in.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="2017.04.02\E - Passwords(AC).cpp" />
+    <ClCompile Include="I - The White Rabbit Pocket Watch.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3DAB8C96-CB21-4155-9AB4-3FFDBC6390F5}</ProjectGuid>
