@@ -92,7 +92,7 @@ public:
 		}
 		now--;
 	}
-	variable() { now = 0; head[now] = NULL;}
+	variable() { now = 0; head[now] = NULL; newfloor(); }
 	~variable() {			//Çå¿Õ±äÁ¿
 		while (now) {
 			deletefloor();
