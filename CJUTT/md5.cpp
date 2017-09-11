@@ -9,6 +9,7 @@ int main(int argc, char *argv[]) {
 		f.init(fname);
 		f.shengming();
 		f.runmain();
+
 	}
 	return 0;
 }

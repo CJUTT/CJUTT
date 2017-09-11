@@ -19,9 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="in.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="all.h" />
     <ClInclude Include="file.h" />
     <ClInclude Include="mydata.h" />
