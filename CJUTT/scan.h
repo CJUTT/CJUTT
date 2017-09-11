@@ -79,13 +79,18 @@ inline std::vector<token> scan::stringToVectorToken(std::string buf)
 			}
 			else {
 				if (buf[i] == '(') {
-					while (i < buf.size() && (buf[i] != ')' && buf[i] != '\n')) {
+					int flag = 1;
+					str.append(1, buf[i]);
+					i++;
+					while (i < buf.size() && flag && buf[i] != '\n') {
+						if (buf[i] == '(')
+							flag++;
+						else if (buf[i] == ')')
+							flag--;
 						str.append(1, buf[i]);
 						i++;
 					}
-					if (i < buf.size() && buf[i] == ')') {
-						str.append(1, buf[i]);
-						i++;
+					if (flag == 0) {
 						v.push_back(token(FUNCTION, str));
 					}
 					else {

@@ -1,18 +1,11 @@
-max(int a,int b)
-{
-  if a>b
-  {return a;}
-  else
-  {return b;}
+sub(int a,int b){
+	return a+b;
 }
-
 int main()
 {
-  int a,b,re;
-  a=5;
-  b=3;
-  re=max(a,b);
-  out "5 and 3, max= ",re;
+  int a=1,b=2;
+  a=sub(sub(a,b),sub(a,sub(a,b)));
+  out a;
   out "\n";
   return 0;
 }
