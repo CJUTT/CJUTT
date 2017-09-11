@@ -1,12 +1,10 @@
 int main()
 {
-  int a,b;
-  string c1;
-  //string d="";
-  c1="234\n";
-  a=4;
-  b=-1;
-  out a+b,c1;
+  int i;
+  i=4;
+  if 
+  {out i;}
   return 0;
 }
-//out 输出次数为计算式时
+//error
+//if没有判断条件
