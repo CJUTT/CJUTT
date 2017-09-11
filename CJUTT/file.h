@@ -863,32 +863,26 @@ public:
 		}
 	}
 	int out(std::vector<token> buf) {
+		std::vector<token> nex;
+		nex.push_back(buf[0]);
+		for (int i = 1; i < buf.size(); i++)
+		{
+			std::vector<token> temp;
+			while (i < buf.size() && buf[i].value != ",") {
+				temp.push_back(buf[i]);
+				i++;
+			}
+			nex.push_back(solve(temp));
+			if (i < buf.size())
+				nex.push_back(buf[i]);
+		}
+		return out_(nex);
+	}
+	int out_(std::vector<token> buf) {
 		int pt = 1;
-		if (buf[buf.size() - 1].value == "\n")
-			buf.resize(buf.size() - 1);
 		switch (buf.size()) {
 		case 2:
-			if (buf[1].type == STRING)
-				strout(buf[1].value);
-			else {
-				mydata* temp_data1 = vardb.find(name(buf[1].value));
-				if (temp_data1 == NULL) {
-					std::cout << "illegal variable" << std::endl;
-					exit(0);
-				}
-				if (temp_data1->type == INT) {
-					int &t = temp_data1->toint();
-					std::cout << t;
-				}
-				else if (temp_data1->type == REAL) {
-					float &t = temp_data1->toreal();
-					std::cout << t;
-				}
-				else {
-					std::string &t = temp_data1->tostring();//wrong
-					strout(t);
-				}
-			}
+			strout(buf[1].value);
 			break;
 
 		case 4:
@@ -910,28 +904,8 @@ public:
 				std::cout << "无法负数次输出" << std::endl;
 				exit(0);
 			}
-			if (buf[3].type == STRING)
-				for (int i = 0; i < pt; i++)
-					strout(buf[3].value);
-			else for (int i = 0; i < pt; i++) {
-				mydata* temp_data3 = vardb.find(name(buf[3].value));
-				if (temp_data3 == NULL) {
-					std::cout << "illegal variable" << std::endl;
-					exit(0);
-				}
-				if (temp_data3->type == INT) {
-					int &t = temp_data3->toint();
-					std::cout << t;
-				}
-				else if (temp_data3->type == REAL) {
-					float &t = temp_data3->toreal();
-					std::cout << t;
-				}
-				else {
-					std::string &t = temp_data3->tostring();//wrong
-					strout(t);
-				}
-			}
+			for (int i = 0; i < pt; i++)
+				strout(buf[3].value);
 			break;
 
 		case 6:
@@ -954,28 +928,12 @@ public:
 				exit(0);
 			}
 
-			if (buf[5].type == STRING)
-				for (int i = 0; i < pt; i++)
-					std::cout << buf[5].value;
-			else for (int i = 0; i < pt; i++) {
-				mydata* temp_data5 = vardb.find(name(buf[5].value));
-				if (temp_data5 == NULL) {
-					std::cout << "illegal variable" << std::endl;
-					exit(0);
-				}
-				if (temp_data5->type == INT) {
-					int &t = temp_data5->toint();
-					std::cout << t;
-				}
-				else if (temp_data5->type == REAL) {
-					float &t = temp_data5->toreal();
-					std::cout << t;
-				}
-				else {
-					std::string &t = temp_data5->tostring();//wrong
-					strout(t);
-				}
-			}
+			for (int i = 0; i < pt; i++)
+				std::cout << buf[5].value;
+		default:
+			std::cout << "不是合法的输出语句" << std::endl;
+			exit(0);
+			break;
 		}
 		return 1;
 	}

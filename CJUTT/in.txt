@@ -1,11 +1,5 @@
 int main()
 {
-  int a = 1;
-  do{
-	a = a+ a;
-	out a;
-	out "\n";
-  }
-  until a > 100;
+  out 1+2,3+4,5+6,7+8;
   return 0;
 }
