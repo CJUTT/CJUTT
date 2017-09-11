@@ -29,7 +29,7 @@ private:
 	}
 public:
 	bool isSpace(token t) {
-		if (t.value == " " || t.value == "\t" || t.value == "\0") return true;
+		if (t.value == " " || t.value == "\t" || t.value == "\n") return true;
 		return false;
 	}
 	token next();
@@ -328,11 +328,8 @@ inline std::string scan::toString()
 		else if (v[i].type == CBRACKET) {
 			ret = ret + "{" + v[i].value + "}";
 		}
-		else if (v[i].value == "int" || v[i].value == "real" || v[i].value == "string" || v[i].value == "while" || v[i].value == "if" || v[i].value == "else" || v[i].value == "do" || v[i].value == "until" || v[i].value == "return" || v[i].value == "in" || v[i].value == "out" || v[i].value == "break" || v[i].value == "continue") {
-			ret = ret + " " + v[i].value;
-		}
 		else {
-			ret = ret + v[i].value;
+			ret = ret + " " + v[i].value;
 		}
 	}
 	return ret;

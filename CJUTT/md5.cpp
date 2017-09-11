@@ -4,10 +4,11 @@
 
 int main(int argc, char *argv[]) {
 	std::string fname;
-	while (std::cin >> fname) {
-		file f = file(fname);
+	fname = "in.txt";
+	//while (std::cin >> fname) {
+		file f(fname);
 		f.shengming();
 		f.runmain();
-	}
+	//}
 	return 0;
 }

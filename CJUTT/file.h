@@ -14,7 +14,7 @@ public:
 	}
 	token solve(std::vector<token> buf) {
 		for (std::vector<token>::iterator it = buf.begin(); it != buf.end(); it++) {
-			while (it != buf.end() && ((*it).value == " " || (*it).value == "\n" || (*it).value == "\t" || (*it).value == "\0" || (*it).value == ";")) {
+			while (it != buf.end() && ((*it).value == " " || (*it).value == "\n" || (*it).value == "\t" || (*it).value == ";")) {
 				it = buf.erase(it);
 			}
 			if (it == buf.end())
@@ -860,7 +860,10 @@ public:
 				int &t = temp_data1->toint();
 				pt = t;
 			}
-
+			if (pt < 0) {
+				std::cout << "无法负数次输出" << std::endl;
+				exit(0);
+			}
 			if (buf[3].type == STRING)
 				for (int i = 0; i < pt; i++)
 					strout(buf[3].value);
@@ -899,6 +902,11 @@ public:
 			}
 
 			strout(buf[3].value);
+
+			if (pt < 0) {
+				std::cout << "无法负数次输出" << std::endl;
+				exit(0);
+			}
 
 			if (buf[5].type == STRING)
 				for (int i = 0; i < pt; i++)
@@ -950,7 +958,6 @@ class file{
 private:
 	char buf[100000];
 	int brp[200];
-
 public:
 	std::string str;
 	int tot;
@@ -965,11 +972,9 @@ public:
 			str = str + std::string(buf) + "\n";
 		}
 		in.close();
-		str = scan(str).toString();
-		// test
-		std::cout << str << std::endl;
+		tot = 0;
+		line = 1;
 	}
-
 	bool danzifu(char c) {
 		if (c == ';' || c == '(' || c == ')' || c == '{' || c == '}' || c == ',')
 			return 1;
@@ -998,7 +1003,6 @@ public:
 		std::string temp, na;
 		std::string funstr;
 		std::vector<int> pra;
-		mydata* da;
 		int type;
 		for (tot = 0; tot < str.size();) {
 			type = INT;
@@ -1258,7 +1262,7 @@ inline void strtotoken(std::string str, std::vector<token> &tok) {		//将一句字符
 inline void strtosta(std::string str, std::vector<statement> &sta) {		//将一段字符串解析为语句组
 	scan sc = scan(str);
 	for (std::vector<token>::iterator it = sc.v.begin(); it != sc.v.end(); it++) {
-		while ((it != sc.v.end()) && ((*it).value == " " || (*it).value == "\n" || (*it).value == "\t" || (*it).value == "\0")) {
+		while ((it != sc.v.end()) && ((*it).value == " " || (*it).value == "\n" || (*it).value == "\t")) {
 			it = sc.v.erase(it);
 		}
 		if (it == sc.v.end())
