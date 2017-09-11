@@ -22,7 +22,15 @@
     <Text Include="in.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="C.cpp" />
+    <ClInclude Include="all.h" />
+    <ClInclude Include="file.h" />
+    <ClInclude Include="mydata.h" />
+    <ClInclude Include="scan.h" />
+    <ClInclude Include="token.h" />
+    <ClInclude Include="variable.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="md5.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3DAB8C96-CB21-4155-9AB4-3FFDBC6390F5}</ProjectGuid>
