@@ -29,6 +29,9 @@
   <ItemGroup>
     <ClCompile Include="md5.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="in.txt" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3DAB8C96-CB21-4155-9AB4-3FFDBC6390F5}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>

@@ -605,7 +605,7 @@ public:
 		while (!scan(sc).isSpace(cur)) {
 			if (cur.value == ",") {
 				flag = 1;
-				cur = cal.solve(temp);
+				cur = solve(temp);
 				if (cur.value == "") {
 					std::cout << "函数参数传递错误" << std::endl;
 					exit(0);
@@ -634,7 +634,7 @@ public:
 			}
 			cur = sc.next();
 		}
-		cur = cal.solve(temp);
+		cur = solve(temp);
 		if (cur.value != "") {
 			if (cur.type == INT) {
 				par.push_back(INT);
@@ -942,7 +942,9 @@ public:
 		}
 		return token(INT, "1");
 	}
-}cal;
+};
+
+calculate cal;
 
 class file{
 private:
@@ -952,7 +954,7 @@ public:
 	std::string str;
 	int tot;
 	int line;
-	file() {
+	file() :tot(0), line(0) {
 		vardb.newfloor();
 	}
 	void init(std::string fname) {
@@ -1000,7 +1002,6 @@ public:
 		for (tot = 0; tot < str.size();) {
 			type = INT;
 			temp = nextstr();
-			int line = line;
 			if (temp == "int")
 				type = INT;
 			else if (temp == "real")
