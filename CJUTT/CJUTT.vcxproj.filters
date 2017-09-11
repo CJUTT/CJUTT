@@ -20,7 +20,27 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="temp.cpp">
+    <ClInclude Include="file.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="all.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="mydata.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="scan.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="token.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="variable.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="md5.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
