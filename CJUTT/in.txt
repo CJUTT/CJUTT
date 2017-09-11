@@ -1,12 +1,11 @@
 int main()
 {
-  int a,b;
-  string c1;
-  //string d="";
-  c1="234\n";
-  a=4;
-  b=-1;
-  out a+b,c1;
+  int a = 1;
+  do{
+	a = a+ a;
+	out a;
+	out "\n";
+  }
+  until a > 100;
   return 0;
 }
-//out 输出次数为计算式时

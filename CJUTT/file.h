@@ -1334,7 +1334,11 @@ inline void strtosta(std::string str, std::vector<statement> &sta) {		//½«Ò»¶Î×Ö
 				temp.push_back(sc.v[j]);
 				j++;
 			}
-			if (j + 2 < sc.v.size() && sc.v[j].type == CBRACKET && sc.v[j + 1].value == "else" && sc.v[j + 2].type == CBRACKET) {
+			if (j + 2 < sc.v.size() && sc.v[j].type == CBRACKET && sc.v[j + 1].value == "else" && sc.v[j + 2].type != CBRACKET) {
+				std::cout << "elseºóÃæÄ¨ÓÍ´óÀ¨ºÅ" << std::endl;
+				exit(0);
+			}
+			else if (j + 2 < sc.v.size() && sc.v[j].type == CBRACKET && sc.v[j + 1].value == "else" && sc.v[j + 2].type == CBRACKET) {
 				sta.push_back(statement(scan(temp).toString(), sc.v[j].value, sc.v[j + 2].value));
 				i = j + 3;
 			}
@@ -1355,11 +1359,27 @@ inline void strtosta(std::string str, std::vector<statement> &sta) {		//½«Ò»¶Î×Ö
 				j++;
 			}
 			if (j < sc.v.size() && sc.v[j].type == CBRACKET) {
-				sta.push_back(statement(scan(temp).toString(), sc.v[j].value));
+				sta.push_back(statement(scan(temp).toString(), sc.v[j].value, MYWHILE));
 				i = j + 1;
 			}
 			else {
 				std::cout << "whileÓï¾ä´íÎó" << std::endl;
+				exit(0);
+			}
+		}
+		else if (sc.v[i].value == "do") {
+			if (i + 2 < sc.v.size() && sc.v[i + 1].type == CBRACKET && sc.v[i + 2].value == "until") {
+				int j = i + 3;
+				std::vector<token> temp;
+				while (sc.v[j].value != ";") {
+					temp.push_back(sc.v[j]);
+					j++;
+				}
+				sta.push_back(statement(sc.v[i + 1].value, scan(temp).toString(), DOUNTIL));
+				i = j + 1;
+			}
+			else {
+				std::cout << "do untilÓï¾ä´íÎó" << std::endl;
 				exit(0);
 			}
 		}
