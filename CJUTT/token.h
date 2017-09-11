@@ -80,6 +80,10 @@ public:
 			return token();
 		}
 		else if (a.type == INT && b.type == INT) {
+			if (b.value == "0") {
+				std::cout << "Error:³ýÊýÎª0" << std::endl;
+				exit(0);
+			}
 			return token(INT, a.toString(a._toInt(a.value) / b._toInt(b.value)));
 		}
 		else {

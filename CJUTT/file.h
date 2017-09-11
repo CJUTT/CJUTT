@@ -22,22 +22,22 @@ public:
 		}
 		if (buf.size() == 0)
 			return token(None, "");
-		if (buf[0].value == "int") {
+		if (buf[0].value == "int" && buf[0].type == KEY) {
 			std::vector<token>::iterator it = buf.begin();
 			buf.erase(it);
 			return declare(buf, INT);
 		}
-		else if (buf[0].value == "real") {
+		else if (buf[0].value == "real" && buf[0].type == KEY) {
 			std::vector<token>::iterator it = buf.begin();
 			buf.erase(it);
 			return declare(buf, REAL);
 		}
-		else if (buf[0].value == "string") {
+		else if (buf[0].value == "string" && buf[0].type == KEY) {
 			std::vector<token>::iterator it = buf.begin();
 			buf.erase(it);
 			return declare(buf, STRING);
 		}
-		else if (buf[0].value == "return") {
+		else if (buf[0].value == "return" && buf[0].type == KEY) {
 			std::vector<token>::iterator it = buf.begin();
 			buf.erase(it);
 			token temp = solve(buf);
@@ -51,11 +51,17 @@ public:
 				return token(RSTRING, temp.value);
 			}
 		}
-		else if (buf[0].value == "in") {
+		else if (buf[0].value == "in" && buf[0].type == KEY) {
 			return token(INT, tostring(in(buf)));
 		}
-		else if (buf[0].value == "out") {
+		else if (buf[0].value == "out" && buf[0].type == KEY) {
 			return token(INT, tostring(out(buf)));
+		}
+		else if (buf[0].value == "break" && buf[0].type == KEY) {
+			return token(BREAK, "1");
+		}
+		else if (buf[0].value == "continue" && buf[0].type == KEY) {
+			return token(CONTINUE, "1");
 		}
 		else {
 			token ret = solve_kuohao(buf);
@@ -250,7 +256,20 @@ public:
 						std::cout << "非法的#运算:字符串已经为空" << std::endl;
 						exit(0);
 					}
-					nex[nex.size() - 1].value.resize(nex[nex.size() - 1].value.size() - 1);
+					int si = nex[nex.size() - 1].value.size();
+					if (nex[nex.size() - 1].value[si - 1] == '\"' || nex[nex.size() - 1].value[si - 1] == '0' || nex[nex.size() - 1].value[si - 1] == 'n' || nex[nex.size() - 1].value[si - 1] == 't' || nex[nex.size() - 1].value[si - 1] == '\\' || nex[nex.size() - 1].value[si - 1] == '\'') {
+						int j = si - 2, cnt = 0;
+						while (nex[nex.size() - 1].value[j] == '\\') {
+							j--;
+							cnt++;
+						}
+						if (cnt % 2) {
+							nex[nex.size() - 1].value.resize(si - 2);
+						}
+						else {
+							nex[nex.size() - 1].value.resize(si - 1);
+						}
+					}
 				}
 				break;
 			}
@@ -418,10 +437,11 @@ public:
 			temp.push_back(q.back());
 			q.pop_back();
 		}
-		return solve_eq(temp);
+		return solve_xiaoyu(temp);
 	}
 
-	token solve_eq(std::vector<token> buf) {
+	token solve_xiaoyu(std::vector<token> buf) {
+		std::vector<token> temp;
 		std::deque<token> q;
 		for (int i = 0; i < buf.size(); i++) {
 			token cur = buf[i];
@@ -432,13 +452,7 @@ public:
 				cur = fun(buf[i]);
 			}
 			if (!q.empty()) {
-				if (q.front().value == "==") {
-					q.pop_front();
-					token pre = q.front();
-					q.pop_front();
-					q.push_front(pre == cur);
-				}
-				else if (q.front().value == ">") {
+				if (q.front().value == ">") {
 					q.pop_front();
 					token pre = q.front();
 					q.pop_front();
@@ -462,13 +476,73 @@ public:
 					q.pop_front();
 					q.push_front(pre <= cur);
 				}
+				else {
+					q.push_front(cur);
+				}
+			}
+			else {
+				q.push_front(cur);
+			}
+		}
+		while (!q.empty()) {
+			temp.push_back(q.back());
+			q.pop_back();
+		}
+		return solve_eq(temp);
+	}
+
+	token solve_eq(std::vector<token> buf) {
+		std::vector<token> temp;
+		std::deque<token> q;
+		for (int i = 0; i < buf.size(); i++) {
+			token cur = buf[i];
+			if (buf[i].type == VARIABLE) {
+				cur = var(buf[i]);
+			}
+			else if (buf[i].type == FUNCTION) {
+				cur = fun(buf[i]);
+			}
+			if (!q.empty()) {
+				if (q.front().value == "==") {
+					q.pop_front();
+					token pre = q.front();
+					q.pop_front();
+					q.push_front(pre == cur);
+				}
+
 				else if (q.front().value == "<>") {
 					q.pop_front();
 					token pre = q.front();
 					q.pop_front();
 					q.push_front(pre != cur);
 				}
-				else if (q.front().value == "||") {
+				else {
+					q.push_front(cur);
+				}
+			}
+			else {
+				q.push_front(cur);
+			}
+		}
+		while (!q.empty()) {
+			temp.push_back(q.back());
+			q.pop_back();
+		}
+		return solve_yuhuo(temp);
+	}
+
+	token solve_yuhuo(std::vector<token> buf) {
+		std::deque<token> q;
+		for (int i = 0; i < buf.size(); i++) {
+			token cur = buf[i];
+			if (buf[i].type == VARIABLE) {
+				cur = var(buf[i]);
+			}
+			else if (buf[i].type == FUNCTION) {
+				cur = fun(buf[i]);
+			}
+			if (!q.empty()) {
+				if (q.front().value == "||") {
 					q.pop_front();
 					token pre = q.front();
 					q.pop_front();
@@ -492,7 +566,8 @@ public:
 			return q.front();
 		}
 		else {
-			std::cout << "i thought there's something went wrong" << std::endl;
+			std::cout << "不是合法的算式" << std::endl;
+			exit(0);
 		}
 	}
 
@@ -649,7 +724,7 @@ public:
 		cur = sc.next();
 		temp.clear();
 		int flag = 0;
-		while (!scan(sc).isSpace(cur)) {
+		while (!sc.isSpace(cur)) {
 			if (cur.value == ",") {
 				flag = 1;
 				cur = solve(temp);
@@ -726,103 +801,7 @@ public:
 		return y;
 	}
 
-	int in(std::vector<token> buf){
-		if (buf[buf.size() - 1].value == "\n")
-			buf.resize(buf.size() - 1);
-		int len = buf.size(), i;
-		std::string temp, s;
-		std::cin >> s;// 将用户输入以字符串形式输入 
-		if (len <= 3)//判断动态数组长度 ：输入方式为 in+变量 或者in+提示字符+变量 
-		{
-			if (len == 2) //判定变量所在位置 
-				temp = buf[1].value;
-			if (len == 3)
-			{
-				temp = buf[2].value;
-				std::cout << buf[1].value;
-			}
-			name a = name(temp);//存在一个名字为nex里面所存字符串的变量 
-			if (vardb.find(a) != NULL)//变量已被声明 
-			{
-				mydata* aa = vardb.find(a);
-				int typ = aa->type;
-				if (typ == STRING)//字符串型的变量 
-				{
-					std::string &t = aa->tostring();
-					t = s;//字符串的话赋值
-					return 1;
-				}
-				if (typ == REAL) //real型的变量 
-				{
-					int pointflag = 0; //小数点标记 		 	
-					int isize = s.size();
-					for (i = 0; i < isize; i++)//判断输入的是否是一个浮点数，输入的只能为数字，'-'，'.'; 
-					{
-						if (s[0] == '.')
-							exit(0);
-						if (s[0] == '-')// 为负数 
-							continue;
-						if (s[i] == '.')
-						{
-							pointflag++;
-							if (pointflag > 1)//两个以上的小数点报错 
-								exit(0);
-							else
-								continue;
-						}
-						else if (s[i] >= '0'&&s[i] <= '9') //存在非数字 直接exit 
-							continue;
-						else
-							exit(0);
-					}
-					std::stringstream sstr(s);
-					float x;//x为转换 
-					sstr >> x;
-					float &t = aa->toreal();
-					t = x;
-					return 1;
-				}
-				if (typ == INT)//int型变量 
-				{
-					int isize = s.size();
-					for (i = 0; i < isize; i++)//判断输入的是否是一个整数数，输入的只能为数字，'-'; 输入012视为12 
-					{
-						if (s[0] == '-')   //为负数 
-							continue;
-						if (s[i] <= '9'&&s[i] >= '0')
-						{
-							continue;
-						}
-						else//存在非数字 直接exit 
-							exit(0);
-					}
-					std::stringstream sstr(s);
-					int x;//x为转换 
-					sstr >> x;
-					int &t = aa->toint();
-					t = x;
-				}
-
-			}
-			else
-				exit(0);
-		}
-		else {
-			exit(0);//先做违法处理		
-		}
-	}
-	/*
-	out按vector长度分三种合法用法：
-	2:	out <变量名>|"<提示串>";
-	4:	out (<整形变量>|<整型常量>|"<提示串>"), (<变量名>|"<提示串>");
-	6:	out (<整形变量>|<整型常量>), "<提示串>", (<变量名>|"<提示串>");
-
-	pt为最后一项的输出次数。
-
-	有效转移符：'\n', '\t', '\0', '\\', '\”', '\’'
-
-	所有变量需要此前定义赋值。
-	*/
+	// 输出提示串
 	void strout(std::string str) {
 		for (int i = 0; i < str.size(); i++) {
 			if (str[i] == '\\') {
@@ -862,6 +841,121 @@ public:
 				std::cout << str[i];
 		}
 	}
+
+	int in(std::vector<token> buf)
+	{
+		if (buf[buf.size() - 1].value == "\n")
+			buf.resize(buf.size() - 1);
+		int len = buf.size(), i;
+		std::string temp, s;
+		if (len == 4 || len == 2)//判断动态数组长度 ：输入方式为 in+变量 或者in+提示字符+逗号+变量 
+		{
+
+			if (len == 2) //判定变量所在位置 即in+变量名字 
+				temp = buf[1].value;
+			if (len == 4)//判断变量所在位置 
+			{
+				temp = buf[3].value;
+				strout(buf[1].value);//输出提示信息 
+			}
+			std::cin >> s;// 将用户输入以字符串形式输入
+			name a = name(temp);//存在一个名字为nex里面所存字符串的变量 
+			if (vardb.find(a) != NULL)//变量已被声明 
+			{
+				mydata* aa = vardb.find(a);
+				int typ = aa->type;
+				if (typ == STRING)//字符串型的变量 
+				{
+					std::string &t = aa->tostring();
+					t = s;//字符串的话赋值
+					return 1;
+				}
+				if (typ == REAL) //real型的变量 
+				{
+					int pointflag = 0; //小数点标记 		 	
+					int isize = s.size();
+					for (i = 0; i < isize; i++)//判断输入的是否是一个浮点数，输入的只能为数字，'-'，'.'; 
+					{
+						if (s[0] == '.')
+						{
+							printf("数据格式有误\n");
+							exit(0);
+						}
+
+						if (s[0] == '-')// 为负数 
+							continue;
+						if (s[i] == '.')
+						{
+							pointflag++;
+							if (pointflag > 1)//两个以上的小数点报错 
+							{
+								printf("数据格式有误");
+								exit(0);
+							}
+							else
+								continue;
+						}
+						else if (s[i] >= '0'&&s[i] <= '9') //存在非数字 直接exit 
+							continue;
+						else
+							exit(0);
+					}
+					std::stringstream sstr(s);
+					float x;//x为转换 
+					sstr >> x;
+					float &t = aa->toreal();
+					t = x;
+					return 1;
+				}
+				if (typ == INT)//int型变量 
+				{
+					int isize = s.size();
+					for (i = 0; i < isize; i++)//判断输入的是否是一个整数数，输入的只能为数字，'-'; 输入012视为12 
+					{
+						if (s[0] == '-')   //为负数 
+							continue;
+						if (s[i] <= '9'&&s[i] >= '0')
+						{
+							continue;
+						}
+						else//存在非数字 直接exit
+						{
+							printf("数据格式有误\n"); exit(0);
+						}
+					}
+					std::stringstream sstr(s);
+					int x;//x为转换 
+					sstr >> x;
+					int &t = aa->toint();
+					t = x;
+				}
+
+			}
+			else
+			{
+				printf("变量未申明\n");
+				exit(0); //变量未申明 
+			}
+		}
+		else {
+			printf("数据格式有误\n");
+			exit(0);//先做违法处理		
+		}
+	}
+
+	/*
+	out按vector长度分三种合法用法：
+	2:	out <变量名>|"<提示串>";
+	4:	out (<整形变量>|<整型常量>|"<提示串>"), (<变量名>|"<提示串>");
+	6:	out (<整形变量>|<整型常量>), "<提示串>", (<变量名>|"<提示串>");
+
+	pt为最后一项的输出次数。
+
+	有效转移符：'\n', '\t', '\0', '\\', '\”', '\’'
+
+	所有变量需要此前定义赋值。
+	*/
+	
 	int out(std::vector<token> buf) {
 		std::vector<token> nex;
 		nex.push_back(buf[0]);
@@ -891,6 +985,10 @@ public:
 				pt = std::stoi(buf[1].value); break;
 			case STRING:
 				strout(buf[1].value); break;
+			case REAL:
+				std::cout << "重复输出次数不能为浮点型" << std::endl;
+				exit(0);
+				break;
 			case VARIABLE:
 				mydata* temp_data1 = vardb.find(name(buf[1].value));
 				if (temp_data1 == NULL || temp_data1->type != INT) {
@@ -945,6 +1043,10 @@ public:
 				vardb.newdata(name(buf[i].value), type);
 				temp.push_back(buf[i]);
 			}
+			else {
+				std::cout << "声明的不是变量" << std::endl;
+				exit(0);
+			}
 			i++;
 			while (i < buf.size() && buf[i].value != ",") {
 				temp.push_back(buf[i]);
@@ -970,9 +1072,72 @@ private:
 			if (it == buf.end())
 				break;
 		}
-		if (buf.size() != 3) {
+		if (buf.size() != 3 && buf.size() != 2) {
 			std::cout << "函数声明有误" << std::endl;
 			exit(0);
+		}
+		else if (buf.size() != 3) {
+			if (buf[0].type != FUNCTION || buf[1].type != CBRACKET) {
+				std::cout << "函数声明有误" << std::endl;
+				exit(0);
+			}
+			else {
+				std::vector<int> pra;	// 变量类型
+				std::string function_name, str;	// str: 括号内的字符串
+				int i = 0;
+				while (buf[0].value[i] != '(') {
+					function_name.append(1, buf[0].value[i]);
+					i++;
+				}
+				i++;
+				while (buf[0].value[i] != ')') {
+					str.append(1, buf[0].value[i]);
+					i++;
+				}
+				scan sc = scan(str);
+				while (!sc.end()) {
+					token cur;
+					cur = sc.next();
+					if (cur.value == "int") {
+						pra.push_back(INT);
+					}
+					else if (cur.value == "real") {
+						pra.push_back(REAL);
+					}
+					else if (cur.value == "string") {
+						pra.push_back(STRING);
+					}
+					else {
+						std::cout << "函数声明有误" << std::endl;
+						exit(0);
+					}
+
+					if (sc.end()) {
+						std::cout << "函数声明有误" << std::endl;
+						exit(0);
+					}
+					cur = sc.next();
+					if (cur.type != VARIABLE) {
+						std::cout << "函数声明有误" << std::endl;
+						exit(0);
+					}
+
+					if (sc.end()) {
+						break;
+					}
+					cur = sc.next();
+					if (cur.value != ",") {
+						std::cout << "函数声明有误" << std::endl;
+						exit(0);
+					}
+				}
+				for (int i = 0; i < str.size(); i++) {
+					if (str[i] == ',')
+						str[i] = ';';
+				}
+				str.append(1, ';');
+				vardb.newdata(name(function_name), pra, str + buf[1].value, INT);
+			}
 		}
 		else if ((buf[0].value != "int") && (buf[0].value != "real") && (buf[0].value != "string") || buf[1].type != FUNCTION || buf[2].type != CBRACKET) {
 			std::cout << "函数声明有误" << std::endl;
@@ -1028,14 +1193,19 @@ private:
 					exit(0);
 				}
 			}
+			for (int i = 0; i < str.size(); i++) {
+				if (str[i] == ',')
+					str[i] = ';';
+			}
+			str.append(1, ';');
 			if (buf[0].value == "int") {
-				vardb.newdata(name(function_name), pra, buf[2].value, INT);
+				vardb.newdata(name(function_name), pra, str + buf[2].value, INT);
 			}
 			else if (buf[0].value == "real") {
-				vardb.newdata(name(function_name), pra, buf[2].value, REAL);
+				vardb.newdata(name(function_name), pra, str + buf[2].value, REAL);
 			}
 			else {
-				vardb.newdata(name(function_name), pra, buf[2].value, STRING);
+				vardb.newdata(name(function_name), pra, str + buf[2].value, STRING);
 			}
 		}
 	}
