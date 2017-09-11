@@ -22,14 +22,7 @@
     <Text Include="in.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\工程1号\工程1号\all.h" />
-    <ClInclude Include="..\..\..\工程1号\工程1号\mydata.h" />
-    <ClInclude Include="..\..\..\工程1号\工程1号\scan.h" />
-    <ClInclude Include="..\..\..\工程1号\工程1号\token.h" />
-    <ClInclude Include="..\..\..\工程1号\工程1号\variable.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\..\工程1号\工程1号\md5.cpp" />
+    <ClCompile Include="C.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3DAB8C96-CB21-4155-9AB4-3FFDBC6390F5}</ProjectGuid>

@@ -20,24 +20,7 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\工程1号\工程1号\all.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\工程1号\工程1号\mydata.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\工程1号\工程1号\scan.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\工程1号\工程1号\token.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\工程1号\工程1号\variable.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\..\工程1号\工程1号\md5.cpp">
+    <ClCompile Include="C.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
