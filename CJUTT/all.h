@@ -16,19 +16,14 @@
 
 #define None -1
 
-// 基本类型
 #define INT 0
 #define REAL 1
 #define STRING 2
 #define FUNCTION 3
 #define VARIABLE 4
-
-// 返回类型
 #define RINT 5
 #define RREAL 6
 #define RSTRING 7
-
-// 关键字
 #define KINT 8
 #define KREAL 9
 #define KSTRING 10

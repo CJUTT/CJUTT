@@ -907,7 +907,10 @@ public:
 				int &t = temp_data1->toint();
 				pt = t;
 			}
-
+			if (pt < 0) {
+				std::cout << "无法负数次输出" << std::endl;
+				exit(0);
+			}
 			if (buf[3].type == STRING)
 				for (int i = 0; i < pt; i++)
 					strout(buf[3].value);
@@ -946,6 +949,11 @@ public:
 			}
 
 			strout(buf[3].value);
+
+			if (pt < 0) {
+				std::cout << "无法负数次输出" << std::endl;
+				exit(0);
+			}
 
 			if (buf[5].type == STRING)
 				for (int i = 0; i < pt; i++)
