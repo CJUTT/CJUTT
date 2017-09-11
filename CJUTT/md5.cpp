@@ -6,7 +6,7 @@ int main(int argc, char *argv[]) {
 	std::string fname;
 	while (std::cin >> fname) {
 		file f = file(fname);
-		f.shengming();
+		f.declare();
 		f.runmain();
 	}
 	return 0;

@@ -60,6 +60,7 @@
 #define ASSIGN 31
 #define STRLINK 42
 #define STRDEL 43
+#define POW 54
 
 // 分隔符
 #define SPACE 32
@@ -81,6 +82,8 @@
 #define MYWHILE 49
 #define IFELSE 50
 #define DOUNTIL 51
+
+// 1 - 54
 
 const std::string __type__[] = { "INT", "REAL", "STRING", "FUNCTION", "", "", "", "", "", "", "", "逗号", "分号", "关键字", "变量", "", "换行符", "加号或者正号", "减号或者负号", "乘号", "除号", "取模", "逻辑非", "小于号", "小于等于号", "不等于", "大于", "大于等于", "逻辑或", "逻辑与", "等于", "赋值", "括号" };
 
