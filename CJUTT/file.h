@@ -948,14 +948,14 @@ class file{
 private:
 	char buf[100000];
 	int brp[200];
+
 public:
 	std::string str;
 	int tot;
 	int line;
-	file() {
+
+	file(std::string fname) {
 		vardb.newfloor();
-	}
-	void init(std::string fname) {
 		std::ifstream in;
 		in.open(fname, std::ios::in);
 		str.clear();
@@ -964,9 +964,13 @@ public:
 			str = str + std::string(buf) + "\n";
 		}
 		in.close();
+		str = scan(str).toString();
+		// test
+		std::cout << str << std::endl;
 		tot = 0;
 		line = 1;
 	}
+
 	bool danzifu(char c) {
 		if (c == ';' || c == '(' || c == ')' || c == '{' || c == '}' || c == ',')
 			return 1;

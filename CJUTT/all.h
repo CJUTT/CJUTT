@@ -16,14 +16,19 @@
 
 #define None -1
 
+// 基本类型
 #define INT 0
 #define REAL 1
 #define STRING 2
 #define FUNCTION 3
 #define VARIABLE 4
+
+// 返回类型
 #define RINT 5
 #define RREAL 6
 #define RSTRING 7
+
+// 关键字
 #define KINT 8
 #define KREAL 9
 #define KSTRING 10
@@ -33,6 +38,11 @@
 #define KELSE 14
 #define KWHILE 15
 #define KRETURN 16
+#define KDO 52
+#define KUNTIL 53
+#define KEY 41
+
+// 运算符
 #define ADD 17
 #define MINUS 18
 #define MULTI 19
@@ -48,6 +58,10 @@
 #define LE 29
 #define NE 30
 #define ASSIGN 31
+#define STRLINK 42
+#define STRDEL 43
+
+// 分隔符
 #define SPACE 32
 #define TAB 33
 #define NEXTLINE 34
@@ -57,11 +71,6 @@
 #define RBRACKET 38
 #define SBRACKET 39
 #define CBRACKET 40
-
-#define KEY 41
-
-#define STRLINK 42
-#define STRDEL 43
 
 #define KUOHAO 44
 #define RETURN 45
