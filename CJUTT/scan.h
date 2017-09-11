@@ -339,11 +339,10 @@ inline std::string scan::toString()
 			ret = ret + v[i].value + " ";
 		}
 		else {
-			ret = ret + v[i].value;
+			ret = ret + v[i].value + " ";
 		}
 	}
 	return ret;
 }
-
 
 #endif
