@@ -31,6 +31,7 @@ int merge(int x, int y)
 
 struct ARMS {
 	int x, y;
+	int l, r;
 }arms[maxm];
 
 int cmp(ARMS a, ARMS b) {
@@ -51,6 +52,7 @@ int main() {
 		}
 		for (int i = 0; i < m; i++) {
 			scanf("%d %d", &arms[i].x, &arms[i].y);
+			arms[i].l = arms[i].r = i + 1;
 		}
 		sort(arms, arms + m, cmp);
 		for (int i = 0; i < m; i++) {
