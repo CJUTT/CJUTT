@@ -1,12 +1,10 @@
-sub(int a,int b){
+int sub(int a,int b){
 	return a+b;
 }
 int main()
 {
   int a=1,b=2;
-  a=sub(sub(a,b),sub(a,sub(a,b)));
-  out a;
+  out sub(sub(a,b),sub(a,sub(a,b)));
   out "\n";
-  return 0;
+  return 0
 }
-//函数没有定义返回类型，默认返回int

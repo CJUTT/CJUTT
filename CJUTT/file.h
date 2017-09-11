@@ -794,10 +794,6 @@ public:
 		}*/
 		f->run();
 		token y = stk.pop();
-		if ((y == token()).value == "1") {
-			std::cout << "函数没有返回值" << std::endl;
-			exit(0);
-		}
 		return y;
 	}
 
@@ -1395,7 +1391,7 @@ inline int function::run() {
 		t.type = type;
 	}
 	stk.add(t);
-	return ans;
+	return None;
 }
 
 inline bool minstatement::judge() {		//根据解析好的token判断语句返回值是否为真
