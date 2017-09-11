@@ -33,6 +33,11 @@
 #define KELSE 14
 #define KWHILE 15
 #define KRETURN 16
+#define KDO 52
+#define KUNTIL 53
+#define KEY 41
+
+// 运算符
 #define ADD 17
 #define MINUS 18
 #define MULTI 19
@@ -48,6 +53,11 @@
 #define LE 29
 #define NE 30
 #define ASSIGN 31
+#define STRLINK 42
+#define STRDEL 43
+#define POW 54
+
+// 分隔符
 #define SPACE 32
 #define TAB 33
 #define NEXTLINE 34
@@ -58,11 +68,6 @@
 #define SBRACKET 39
 #define CBRACKET 40
 
-#define KEY 41
-
-#define STRLINK 42
-#define STRDEL 43
-
 #define KUOHAO 44
 #define RETURN 45
 #define BREAK 46
@@ -72,6 +77,8 @@
 #define MYWHILE 49
 #define IFELSE 50
 #define DOUNTIL 51
+
+// 1 - 54
 
 const std::string __type__[] = { "INT", "REAL", "STRING", "FUNCTION", "", "", "", "", "", "", "", "逗号", "分号", "关键字", "变量", "", "换行符", "加号或者正号", "减号或者负号", "乘号", "除号", "取模", "逻辑非", "小于号", "小于等于号", "不等于", "大于", "大于等于", "逻辑或", "逻辑与", "等于", "赋值", "括号" };
 

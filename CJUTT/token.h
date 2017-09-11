@@ -25,7 +25,7 @@ public:
 	std::string toString(float x);
 
 	friend token operator + (token a, token b) {
-		if ((a.type == STRING ^ b.type == STRING) || ((a.type != INT && a.type != REAL) ^ (b.type != INT && b.type != REAL))) {
+		if (((a.type == STRING) ^ (b.type == STRING)) || ((a.type != INT && a.type != REAL) ^ (b.type != INT && b.type != REAL))) {
 			std::cout << "加号两边的类型不支持此运算" << std::endl;
 			exit(0);
 			return token();
@@ -101,6 +101,15 @@ public:
 			exit(0);
 		}
 		return token();
+	}
+
+	friend token operator^(token a, token b) {
+		if ((a.type != INT && a.type != REAL) || (b.type != INT && b.type != REAL)) {
+			std::cout << "类型不能作此乘方计算。" << std::endl;
+			exit(0);
+			return token();
+		}
+		return token(REAL, a.toString(pow(a._toFloat(a.value), b._toFloat(b.value))));
 	}
 
 	friend token operator&&(token a, token b)
@@ -225,7 +234,7 @@ public:
 
 	friend token operator==(token a, token b)
 	{
-		if ((a.type == STRING ^ b.type == STRING) || ((a.type != INT && a.type != REAL) ^ (b.type != INT && b.type != REAL))) {
+		if (((a.type == STRING) ^ (b.type == STRING)) || ((a.type != INT && a.type != REAL) ^ (b.type != INT && b.type != REAL))) {
 			std::cout << "类型不能作此等于计算。" << std::endl;
 			exit(0);
 		}

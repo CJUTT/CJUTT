@@ -44,11 +44,11 @@ public:
 			exit(0);
 		}
 		if (type != INT&&type != REAL&&type != STRING) {
-			std::cout << "//变量类型错误" << std::endl;
+			std::cout << "变量类型错误" << std::endl;
 			exit(0);
 		}
 		if (now > 1) {
-			std::cout << "//此处不可声明函数" << std::endl;
+			std::cout << "此处不可声明函数" << std::endl;
 			exit(0);
 		}
 		temp = find(n);

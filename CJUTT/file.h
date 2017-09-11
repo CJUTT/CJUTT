@@ -10,11 +10,11 @@ dataqueue que;
 class calculate {
 public:
 	token solve(std::string buf) {
-		solve(scan(buf).v);
+		return solve(scan(buf).v);
 	}
 	token solve(std::vector<token> buf) {
 		for (std::vector<token>::iterator it = buf.begin(); it != buf.end(); it++) {
-			while (it != buf.end() && ((*it).value == " " || (*it).value == "\n" || (*it).value == "\t" || (*it).value == ";")) {
+			while (it != buf.end() && (*it).value == "\n") {
 				it = buf.erase(it);
 			}
 			if (it == buf.end())
@@ -58,7 +58,8 @@ public:
 			return token(INT, tostring(out(buf)));
 		}
 		else {
-			return solve_kuohao(buf);
+			token ret = solve_kuohao(buf);
+			return ret;
 		}
 	}
 
@@ -98,7 +99,8 @@ public:
 				nex.push_back(buf[i]);
 			}
 		}
-		return solve_fuzhi(nex);
+		token ret = solve_fuzhi(nex);
+		return ret;
 	}
 
 	token solve_fuzhi(std::vector<token> buf) {
@@ -128,7 +130,8 @@ public:
 			return solve_fuzhi(temp);
 		}
 		else {
-			return solve_zhengfu(buf);
+			token ret = solve_zhengfu(buf);
+			return ret;
 		}
 	}
 
@@ -183,7 +186,8 @@ public:
 				flag = isCal(buf[i]);
 			}
 		}
-		return solve_fei(nex);
+		token ret = solve_fei(nex);
+		return ret;
 	}
 
 	token solve_fei(std::vector<token> buf) {
@@ -222,7 +226,8 @@ public:
 			return solve_fei(temp);
 		}
 		else {
-			return solve_jing(buf);
+			token ret = solve_jing(buf);
+			return ret;
 		}
 	}
 
@@ -270,7 +275,49 @@ public:
 			return solve_jing(nex);
 		}
 		else {
-			return solve_multidivmod(nex);
+			token ret = solve_pow(nex);
+			return ret;
+		}
+	}
+
+	token solve_pow(std::vector<token> buf) {
+		token x;
+		int i = -1;
+		for (i = buf.size() - 1; i >= 0; i--) {
+			token cur = buf[i];
+			if (buf[i].type == VARIABLE) {
+				cur = var(buf[i]);
+			}
+			else if (buf[i].type == FUNCTION) {
+				cur = fun(buf[i]);
+			}
+			else if (buf[i].value == "^") {
+				if (i - 1 >= 0 && i + 1 < buf.size()) {
+					token l = buf[i - 1], r = buf[i + 1];
+					x = l ^ r;
+				}
+				else {
+					std::cout << "非法的乘方运算" << std::endl;
+					exit(0);
+					return token();
+				}
+			}
+		}
+
+		if (i != -1) {
+			std::vector<token> nex;
+			for (int j = 0; j < i - 1; j++) {
+				nex.push_back(buf[j]);
+			}
+			nex.push_back(x);
+			for (int j = i + 2; j < buf.size(); j++) {
+				nex.push_back(buf[j]);
+			}
+			solve_pow(nex);
+		}
+		else {
+			token ret = solve_multidivmod(buf);
+			return ret;
 		}
 	}
 
@@ -956,6 +1003,85 @@ calculate cal;
 class file{
 private:
 	char buf[100000];
+
+	void declare_fun(std::vector<token> buf) {
+		for (std::vector<token>::iterator it = buf.begin(); it != buf.end(); it++) {
+			while (it != buf.end() && (*it).value == "\n") {
+				it = buf.erase(it);
+			}
+			if (it == buf.end())
+				break;
+		}
+		if (buf.size() != 3) {
+			std::cout << "函数声明有误" << std::endl;
+			exit(0);
+		}
+		else if ((buf[0].value != "int") && (buf[0].value != "real") && (buf[0].value != "string") || buf[1].type != FUNCTION || buf[2].type != CBRACKET) {
+			std::cout << "函数声明有误" << std::endl;
+			exit(0);
+		}
+		else {
+			std::vector<int> pra;	// 变量类型
+			std::string function_name, str;	// str: 括号内的字符串
+			int i = 0;
+			while (buf[1].value[i] != '(') {
+				function_name.append(1, buf[1].value[i]);
+				i++;
+			}
+			i++;
+			while (buf[1].value[i] != ')') {
+				str.append(1, buf[1].value[i]);
+				i++;
+			}
+			scan sc = scan(str);
+			while (!sc.end()) {
+				token cur;
+				cur = sc.next();
+				if (cur.value == "int") {
+					pra.push_back(INT);
+				}
+				else if (cur.value == "real") {
+					pra.push_back(REAL);
+				}
+				else if (cur.value == "string") {
+					pra.push_back(STRING);
+				}
+				else {
+					std::cout << "函数声明有误" << std::endl;
+					exit(0);
+				}
+
+				if (sc.end()) {
+					std::cout << "函数声明有误" << std::endl;
+					exit(0);
+				}
+				cur = sc.next();
+				if (cur.type != VARIABLE) {
+					std::cout << "函数声明有误" << std::endl;
+					exit(0);
+				}
+
+				if (sc.end()) {
+					break;
+				}
+				cur = sc.next();
+				if (cur.value != ",") {
+					std::cout << "函数声明有误" << std::endl;
+					exit(0);
+				}
+			}
+			if (buf[0].value == "int") {
+				vardb.newdata(name(function_name), pra, buf[2].value, INT);
+			}
+			else if (buf[0].value == "real") {
+				vardb.newdata(name(function_name), pra, buf[2].value, REAL);
+			}
+			else {
+				vardb.newdata(name(function_name), pra, buf[2].value, STRING);
+			}
+		}
+	}
+
 public:
 	bool brp[200];
 	std::string str;
@@ -971,99 +1097,24 @@ public:
 			str = str + std::string(buf) + "\n";
 		}
 		in.close();
-		tot = 0;
-		line = 1;
-	}
-	bool danzifu(char c) {
-		if (c == ';' || c == '(' || c == ')' || c == '{' || c == '}' || c == ',')
-			return 1;
-		return 0;
-	}
-	std::string nextstr() {
-		std::string ans;
-		while (tot < str.size() && (str[tot] == ' ' || str[tot] == '\n')) {
-			if (str[tot] == '\n')
-				line++;
-			tot++;
+		str = scan(str).toString();
 		}
-		if (tot < str.size() && danzifu(str[tot])) {
-			ans = ans + str[tot++];
-			return ans;
-		}
-		while (tot < str.size() && str[tot] != ' ' && str[tot] != '\n') {
-			if (danzifu(str[tot]))
-				return ans;
-			ans = ans + str[tot++];
-		}
-		return ans;
-	}
-	void shengming() {
-		int flag = 0;
-		std::string temp, na;
-		std::string funstr;
-		std::vector<int> pra;
-		int type;
-		for (tot = 0; tot < str.size();) {
-			type = INT;
-			temp = nextstr();
-			if (temp == "int")
-				type = INT;
-			else if (temp == "real")
-				type = REAL;
-			else if (temp == "string")
-				type = STRING;
-			na = nextstr();
-			temp = nextstr();
-			if (temp != "(") {
-				//声明全局变量
-				vardb.newdata(name(na), type);
+
+	void declare() {
+		scan sc = scan(str);
+		std::vector<token> temp;
+		for (int i = 0; i < sc.v.size(); i++) {
+			if (sc.v[i].type == FEN) {
+				cal.solve(temp);
+				temp.clear();
+			}
+			else if (sc.v[i].type == CBRACKET) {
+				temp.push_back(sc.v[i]);
+				declare_fun(temp);
+				temp.clear();
 			}
 			else {
-				funstr.clear();
-				pra.clear();
-				while (1) {
-					temp = nextstr();
-					if (temp == ")")
-						break;
-					if (temp == ",")
-						continue;
-					int pratype = INT;
-					if (temp == "int")
-						pratype = INT;
-					else if (temp == "real")
-						pratype = REAL;
-					else if (temp == "string")
-						pratype = STRING;
-					funstr += temp + ' ';
-					pra.push_back(pratype);
-					temp = nextstr();
-					funstr += temp + ';';
-				}
-				temp = nextstr();
-				if (temp != "{") {
-					//函数定义失败
-					exit(0);
-				}
-				int kuo = 1;
-				for (; tot < str.size(); tot++) {
-					if (str[tot] == '{')
-						kuo++;
-					if (str[tot] == '}')
-						kuo--;
-					if (kuo == 0) {
-						tot++;
-						break;
-					}
-					funstr += str[tot];
-				}
-				if (na == "main") {
-					if (flag) {
-						std::cout << "存在多个main函数" << std::endl;
-						exit(0);
-					}
-					flag++;
-				}
-				vardb.newdata(name(na), pra, funstr, type);
+				temp.push_back(sc.v[i]);
 			}
 		}
 	}
@@ -1100,7 +1151,7 @@ public:
 			exit(0);
 		}
 		brp[x] = 0;
-	}
+		}
 	void set(int x) {
 		if (x < 0 || x >= 200) {
 			std::cout << "增加断点失败" << std::endl;
@@ -1224,17 +1275,7 @@ inline bool minstatement::judge() {		//根据解析好的token判断语句返回值是否为真
 }
 
 inline int minstatement::run() {		//执行语句,若是return类型，将return内容压入栈内并返回RETURN。若是continue，返回CONTINUE。若是break返回BREAK,否则返回None。
-	int flag = 0;
-	if (tok[0].value == "{") {
-		vardb.newfloor();
-		flag = 1;
-		tok.erase(tok.begin());
-		tok.erase(tok.end());
-	}
 	token t = cal.solve(tok);
-	if (flag) {
-		vardb.deletefloor();
-	}
 	if (t.type == RINT) {
 		stk.add(token(INT, t.value));
 		return RETURN;

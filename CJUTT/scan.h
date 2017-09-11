@@ -29,7 +29,7 @@ private:
 	}
 public:
 	bool isSpace(token t) {
-		if (t.value == " " || t.value == "\t" || t.value == "\n") return true;
+		if (t.value == " " || t.value == "\t") return true;
 		return false;
 	}
 	token next();
@@ -59,11 +59,13 @@ inline std::vector<token> scan::stringToVectorToken(std::string buf)
 		// tab
 		else if (buf[i] == '\t') {
 			i++;
-			v.push_back(token(TAB, "\t"));
+			//v.push_back(token(TAB, "\t"));
+			continue;
 		}
 		else if (buf[i] == ' ') {
 			i++;
-			v.push_back(token(SPACE, " "));
+			//v.push_back(token(SPACE, " "));
+			continue;
 		}
 		// 变量 | 函数名 | 关键字
 		else if ((buf[i] >= 'a' && buf[i] <= 'z') || (buf[i] >= 'A' && buf[i] <= 'Z') || buf[i] == '_') {
@@ -72,7 +74,7 @@ inline std::vector<token> scan::stringToVectorToken(std::string buf)
 				str.append(1, buf[i]);
 				i++;
 			}
-			if (str == "int" || str == "real" || str == "string" || str == "while" || str == "if" || str == "else" || str == "in" || str == "out" || str == "return") {
+			if (str == "int" || str == "real" || str == "string" || str == "while" || str == "if" || str == "else" || str == "in" || str == "out" || str == "return" || str == "break" || str == "continue" || str == "do" || str == "until") {
 				v.push_back(token(KEY, str));
 			}
 			else {
@@ -247,6 +249,11 @@ inline std::vector<token> scan::stringToVectorToken(std::string buf)
 			i++;
 			v.push_back(token(MULTI, "*"));
 		}
+		// 乘方
+		else if (buf[i] == '^') {
+			i++;
+			v.push_back(token(POW, "^"));
+		}
 		// 分号
 		else if (buf[i] == ';') {
 			i++;
@@ -328,8 +335,11 @@ inline std::string scan::toString()
 		else if (v[i].type == CBRACKET) {
 			ret = ret + "{" + v[i].value + "}";
 		}
+		else if (v[i].value == "int" || v[i].value == "real" || v[i].value == "string" || v[i].value == "while" || v[i].value == "if" || v[i].value == "else" || v[i].value == "do" || v[i].value == "until" || v[i].value == "return" || v[i].value == "in" || v[i].value == "out" || v[i].value == "break" || v[i].value == "continue") {
+			ret = ret + v[i].value + " ";
+		}
 		else {
-			ret = ret + " " + v[i].value;
+			ret = ret + v[i].value;
 		}
 	}
 	return ret;

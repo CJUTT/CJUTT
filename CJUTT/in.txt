@@ -1,9 +1,12 @@
 int main()
 {
-  int n;
-  in "输入n之前先输出我",n;
-  out n;
-  out "\n";
+  int a,b;
+  string c1;
+  //string d="";
+  c1="234\n";
+  a=4;
+  b=-1;
+  out a+b,c1;
   return 0;
 }
-//测试用例
+//out 输出次数为计算式时
