@@ -863,32 +863,26 @@ public:
 		}
 	}
 	int out(std::vector<token> buf) {
+		std::vector<token> nex;
+		nex.push_back(buf[0]);
+		for (int i = 1; i < buf.size(); i++)
+		{
+			std::vector<token> temp;
+			while (i < buf.size() && buf[i].value != ",") {
+				temp.push_back(buf[i]);
+				i++;
+			}
+			nex.push_back(solve(temp));
+			if (i < buf.size())
+				nex.push_back(buf[i]);
+		}
+		return out_(nex);
+	}
+	int out_(std::vector<token> buf) {
 		int pt = 1;
-		if (buf[buf.size() - 1].value == "\n")
-			buf.resize(buf.size() - 1);
 		switch (buf.size()) {
 		case 2:
-			if (buf[1].type == STRING)
-				strout(buf[1].value);
-			else {
-				mydata* temp_data1 = vardb.find(name(buf[1].value));
-				if (temp_data1 == NULL) {
-					std::cout << "illegal variable" << std::endl;
-					exit(0);
-				}
-				if (temp_data1->type == INT) {
-					int &t = temp_data1->toint();
-					std::cout << t;
-				}
-				else if (temp_data1->type == REAL) {
-					float &t = temp_data1->toreal();
-					std::cout << t;
-				}
-				else {
-					std::string &t = temp_data1->tostring();//wrong
-					strout(t);
-				}
-			}
+			strout(buf[1].value);
 			break;
 
 		case 4:
@@ -910,28 +904,8 @@ public:
 				std::cout << "无法负数次输出" << std::endl;
 				exit(0);
 			}
-			if (buf[3].type == STRING)
-				for (int i = 0; i < pt; i++)
-					strout(buf[3].value);
-			else for (int i = 0; i < pt; i++) {
-				mydata* temp_data3 = vardb.find(name(buf[3].value));
-				if (temp_data3 == NULL) {
-					std::cout << "illegal variable" << std::endl;
-					exit(0);
-				}
-				if (temp_data3->type == INT) {
-					int &t = temp_data3->toint();
-					std::cout << t;
-				}
-				else if (temp_data3->type == REAL) {
-					float &t = temp_data3->toreal();
-					std::cout << t;
-				}
-				else {
-					std::string &t = temp_data3->tostring();//wrong
-					strout(t);
-				}
-			}
+			for (int i = 0; i < pt; i++)
+				strout(buf[3].value);
 			break;
 
 		case 6:
@@ -954,28 +928,12 @@ public:
 				exit(0);
 			}
 
-			if (buf[5].type == STRING)
-				for (int i = 0; i < pt; i++)
-					std::cout << buf[5].value;
-			else for (int i = 0; i < pt; i++) {
-				mydata* temp_data5 = vardb.find(name(buf[5].value));
-				if (temp_data5 == NULL) {
-					std::cout << "illegal variable" << std::endl;
-					exit(0);
-				}
-				if (temp_data5->type == INT) {
-					int &t = temp_data5->toint();
-					std::cout << t;
-				}
-				else if (temp_data5->type == REAL) {
-					float &t = temp_data5->toreal();
-					std::cout << t;
-				}
-				else {
-					std::string &t = temp_data5->tostring();//wrong
-					strout(t);
-				}
-			}
+			for (int i = 0; i < pt; i++)
+				std::cout << buf[5].value;
+		default:
+			std::cout << "不是合法的输出语句" << std::endl;
+			exit(0);
+			break;
 		}
 		return 1;
 	}
@@ -1334,7 +1292,11 @@ inline void strtosta(std::string str, std::vector<statement> &sta) {		//将一段字
 				temp.push_back(sc.v[j]);
 				j++;
 			}
-			if (j + 2 < sc.v.size() && sc.v[j].type == CBRACKET && sc.v[j + 1].value == "else" && sc.v[j + 2].type == CBRACKET) {
+			if (j + 2 < sc.v.size() && sc.v[j].type == CBRACKET && sc.v[j + 1].value == "else" && sc.v[j + 2].type != CBRACKET) {
+				std::cout << "else后面抹油大括号" << std::endl;
+				exit(0);
+			}
+			else if (j + 2 < sc.v.size() && sc.v[j].type == CBRACKET && sc.v[j + 1].value == "else" && sc.v[j + 2].type == CBRACKET) {
 				sta.push_back(statement(scan(temp).toString(), sc.v[j].value, sc.v[j + 2].value));
 				i = j + 3;
 			}
@@ -1355,11 +1317,27 @@ inline void strtosta(std::string str, std::vector<statement> &sta) {		//将一段字
 				j++;
 			}
 			if (j < sc.v.size() && sc.v[j].type == CBRACKET) {
-				sta.push_back(statement(scan(temp).toString(), sc.v[j].value));
+				sta.push_back(statement(scan(temp).toString(), sc.v[j].value, MYWHILE));
 				i = j + 1;
 			}
 			else {
 				std::cout << "while语句错误" << std::endl;
+				exit(0);
+			}
+		}
+		else if (sc.v[i].value == "do") {
+			if (i + 2 < sc.v.size() && sc.v[i + 1].type == CBRACKET && sc.v[i + 2].value == "until") {
+				int j = i + 3;
+				std::vector<token> temp;
+				while (sc.v[j].value != ";") {
+					temp.push_back(sc.v[j]);
+					j++;
+				}
+				sta.push_back(statement(sc.v[i + 1].value, scan(temp).toString(), DOUNTIL));
+				i = j + 1;
+			}
+			else {
+				std::cout << "do until语句错误" << std::endl;
 				exit(0);
 			}
 		}
