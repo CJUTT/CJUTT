@@ -1,0 +1,15 @@
+int main()
+{
+  string a,b;
+  //a="";
+  //b="";
+  string c;
+  c=a$b;
+  out"两个空串合并后: ",c;
+  out "\n";
+  string temp="  e j";
+  c=a$temp;
+  out c;
+  out "\n";
+  return 0;
+}
