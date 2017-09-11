@@ -3,6 +3,15 @@
 
 #include "scan.h"
 
+bool strisempty(std::string &str) {
+	int i;
+	for (i = 0; i < str.size(); i++) {
+		if (str[i] != ' ' && str[i] != '\t' && str[i] != '\n' && str[i] != '\0')
+			break;
+	}
+	return i == str.size();
+}
+
 void strtotoken(std::string str, std::vector<token> &tok);		//将一句字符串解析为token组
 
 class minstatement{
@@ -43,6 +52,10 @@ private:
 	std::vector<statement>sta;
 public:
 	mywhile(std::string _judge, std::string s) :judge(_judge) {
+		if (strisempty(_judge)) {
+			std::cout << "判断式不可为空" << std::endl;
+			exit(0);
+		}
 		strtosta(s, sta);
 	}
 	int run();
@@ -55,6 +68,10 @@ private:
 public:
 	dountil(std::string s, std::string _judge) {
 		strtosta(s, sta);
+		if (strisempty(_judge)) {
+			std::cout << "判断式不可为空" << std::endl;
+			exit(0);
+		}
 		judge = minstatement(_judge);
 	}
 	int run();
@@ -66,6 +83,10 @@ private:
 	std::vector<statement>first, second;
 public:
 	ifelse(std::string _judge, std::string one, std::string two) :judge(_judge) {
+		if (strisempty(_judge)) {
+			std::cout << "判断式不可为空" << std::endl;
+			exit(0);
+		}
 		strtosta(one, first);
 		strtosta(two, second);
 	}

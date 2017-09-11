@@ -679,8 +679,7 @@ public:
 		return y;
 	}
 
-	int in(std::vector<token> buf)
-	{
+	int in(std::vector<token> buf){
 		if (buf[buf.size() - 1].value == "\n")
 			buf.resize(buf.size() - 1);
 		int len = buf.size(), i;
@@ -957,8 +956,8 @@ calculate cal;
 class file{
 private:
 	char buf[100000];
-	int brp[200];
 public:
+	bool brp[200];
 	std::string str;
 	int tot;
 	int line;
@@ -1091,6 +1090,23 @@ public:
 				x->out();
 			}
 		}
+	}
+	void reset() {
+		std::memset(brp, 0, sizeof(brp));
+	}
+	void reset(int x) {
+		if (x < 0 || x >= 200) {
+			std::cout << "É¾³ý¶ÏµãÊ§°Ü" << std::endl;
+			exit(0);
+		}
+		brp[x] = 0;
+	}
+	void set(int x) {
+		if (x < 0 || x >= 200) {
+			std::cout << "Ôö¼Ó¶ÏµãÊ§°Ü" << std::endl;
+			exit(0);
+		}
+		brp[x] = 1;
 	}
 	~file() {
 		vardb.deletefloor();

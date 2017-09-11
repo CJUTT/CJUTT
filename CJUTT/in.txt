@@ -1,9 +1,9 @@
 int main()
 {
-  string a,b,c;
-  in "\"strinfdg\":\n",a;
-  out a;
+  int n;
+  in "输入n之前先输出我",n;
+  out n;
   out "\n";
   return 0;
 }
-//字符串中有保留字
+//测试用例
