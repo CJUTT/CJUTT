@@ -1277,7 +1277,7 @@ inline void strtotoken(std::string str, std::vector<token> &tok) {		//将一句字符
 inline void strtosta(std::string str, std::vector<statement> &sta) {		//将一段字符串解析为语句组
 	scan sc = scan(str);
 	for (std::vector<token>::iterator it = sc.v.begin(); it != sc.v.end(); it++) {
-		while ((it != sc.v.end()) && ((*it).value == " " || (*it).value == "\n" || (*it).value == "\t")) {
+		while ((it != sc.v.end()) && (*it).value == "\n") {
 			it = sc.v.erase(it);
 		}
 		if (it == sc.v.end())

@@ -1,10 +1,22 @@
+//打印空心正方形
 int main()
 {
+  int n;
   int i;
-  i=4;
-  if 
-  {out i;}
+  in n;
+  if n<2 {out "*";return 0;}
+  out n,"*";
+  out "\n";
+  i=1;
+  while i<n-1
+  {
+     out "*";
+     times=n-2;//未声明变量默认为int
+     out times," ";
+     out "*\n";
+     i=i+1;
+  }
+  out n,"*";
+  out "\n";
   return 0;
 }
-//error
-//if没有判断条件
