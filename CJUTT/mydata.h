@@ -7,9 +7,9 @@ void strtotoken(std::string str, std::vector<token> &tok);		//将一句字符串解析为
 
 class minstatement{
 private:
-	int line;
 	std::vector<token> tok;
 public:
+	minstatement() :tok(){}
 	minstatement(std::string str) {
 		strtotoken(str, tok);
 	}
@@ -27,7 +27,7 @@ public:
 		type = MINSTATEMENT;
 		p = new minstatement(one);
 	}
-	statement(std::string one, std::string two);
+	statement(std::string one, std::string two, int _type);
 	statement(std::string one, std::string two, std::string three);
 	void init() {		//执行声明，并从队列中取值初始化
 		((minstatement*)p)->init();
@@ -42,8 +42,20 @@ private:
 	minstatement judge;
 	std::vector<statement>sta;
 public:
-	mywhile(std::string jud, std::string s) :judge(jud) {
+	mywhile(std::string _judge, std::string s) :judge(_judge) {
 		strtosta(s, sta);
+	}
+	int run();
+};
+
+class dountil {
+private:
+	std::vector<statement>sta;
+	minstatement judge;
+public:
+	dountil(std::string s, std::string _judge) {
+		strtosta(s, sta);
+		judge = minstatement(_judge);
 	}
 	int run();
 };
@@ -53,7 +65,7 @@ private:
 	minstatement judge;
 	std::vector<statement>first, second;
 public:
-	ifelse(std::string jud, std::string one, std::string two) :judge(jud) {
+	ifelse(std::string _judge, std::string one, std::string two) :judge(_judge) {
 		strtosta(one, first);
 		strtosta(two, second);
 	}
@@ -168,7 +180,7 @@ struct mydata {		//数据存储结构
 	int &toint() {
 		return *((int*)p);
 	}
-	float &tofloat() {
+	float &toreal() {
 		return *((float*)p);
 	}
 	std::string &tostring() {
@@ -176,6 +188,20 @@ struct mydata {		//数据存储结构
 	}
 	function &tofunction() {
 		return *((function*)p);
+	}
+	void out() {
+		if (type == INT) {
+			std::cout << toint() << std::endl;
+		}
+		else if (type == REAL) {
+			std::cout << toreal() << std::endl;
+		}
+		else if (type == STRING) {
+			std::cout << tostring() << std::endl;
+		}
+		else if (type == FUNCTION) {
+			std::cout << "函数无法显示" << std::endl;
+		}
 	}
 	~mydata() {
 		if (type == INT)
@@ -261,11 +287,16 @@ inline int statement::run() {
 		return ((mywhile*)p)->run();
 	else if (type == IFELSE)
 		return ((ifelse*)p)->run();
+	else if(type==DOUNTIL)
+		return ((dountil*)p)->run();
 }
 
-inline statement::statement(std::string one, std::string two) {
-	type = MYWHILE;
-	p = new mywhile(one, two);
+inline statement::statement(std::string one, std::string two, int _type = MYWHILE) {
+	type = _type;
+	if (type == MYWHILE)
+		p = new mywhile(one, two);
+	else
+		p = new dountil(one, two);
 }
 
 inline statement::statement(std::string one, std::string two, std::string three) {

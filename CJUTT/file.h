@@ -514,7 +514,7 @@ public:
 				cur = assign(t, buf);
 			}
 			else if (temp_data->type == REAL) {
-				float &t = temp_data->tofloat();
+				float &t = temp_data->toreal();
 				cur = assign(t, buf);
 			}
 			else {
@@ -570,7 +570,7 @@ public:
 			if (temp_data == INT)
 				return token(INT, tostring(curdata->toint()));
 			else if (temp_data == REAL)
-				return token(REAL, tostring(curdata->tofloat()));
+				return token(REAL, tostring(curdata->toreal()));
 			else
 				return token(STRING, curdata->tostring());
 		}
@@ -732,7 +732,7 @@ public:
 					std::stringstream sstr(s);
 					float x;//x为转换 
 					sstr >> x;
-					float &t = aa->tofloat();
+					float &t = aa->toreal();
 					t = x;
 					return 1;
 				}
@@ -835,7 +835,7 @@ public:
 					std::cout << t;
 				}
 				else if (temp_data1->type == REAL) {
-					float &t = temp_data1->tofloat();
+					float &t = temp_data1->toreal();
 					std::cout << t;
 				}
 				else {
@@ -875,7 +875,7 @@ public:
 					std::cout << t;
 				}
 				else if (temp_data3->type == REAL) {
-					float &t = temp_data3->tofloat();
+					float &t = temp_data3->toreal();
 					std::cout << t;
 				}
 				else {
@@ -914,7 +914,7 @@ public:
 					std::cout << t;
 				}
 				else if (temp_data5->type == REAL) {
-					float &t = temp_data5->tofloat();
+					float &t = temp_data5->toreal();
 					std::cout << t;
 				}
 				else {
@@ -947,6 +947,7 @@ public:
 class file{
 private:
 	char buf[100000];
+	int brp[200];
 public:
 	std::string str;
 	int tot;
@@ -1068,6 +1069,23 @@ public:
 		fun = *y->tofunction().find(pra);
 		fun.run();
 	}
+	void debug() {
+		if (!brp[line])
+			return;
+		std::string temp;
+		mydata* x;
+		while (std::cin >> temp) {
+			if (temp == "return")
+				return;
+			x = vardb.find(temp);
+			if (x == NULL) {
+				std::cout << "变量未定义" << std::endl;
+			}
+			else{
+				x->out();
+			}
+		}
+	}
 	~file() {
 		vardb.deletefloor();
 	}
@@ -1097,10 +1115,34 @@ inline int mywhile::run() {
 	return ans;
 }
 
+inline int dountil::run() {
+	int ans = None;
+	do {
+		vardb.newfloor();
+		for (int i = 0; i < sta.size(); i++) {
+			ans = sta[i].run();
+			if (ans == CONTINUE || ans == BREAK || ans == RETURN)
+				break;
+		}
+		vardb.deletefloor();
+		if (ans == CONTINUE) {
+			ans = None;
+		}
+		else if (ans == BREAK) {
+			ans = None;
+			break;
+		}
+		else if (ans == RETURN) {
+			break;
+		}
+	} while (!judge.judge());
+	return ans;
+}
+
 inline int ifelse::run() {
 	int ans = None;
-	vardb.newfloor();
 	if (judge.judge()) {
+		vardb.newfloor();
 		for (int i = 0; i < first.size(); i++) {
 			ans = first[i].run();
 			if (ans == CONTINUE || ans == BREAK || ans == RETURN)
@@ -1108,6 +1150,7 @@ inline int ifelse::run() {
 		}
 	}
 	else {
+		vardb.newfloor();
 		for (int i = 0; i < second.size(); i++) {
 			ans = second[i].run();
 			if (ans == CONTINUE || ans == BREAK || ans == RETURN)
