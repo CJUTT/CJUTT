@@ -1057,13 +1057,21 @@ public:
 
 calculate cal;
 
-class debug {
-	int line;
-	int last;
+class breakpoint {
 	bool brp[200];
-	void de() {
-		if (!brp[line])
+	int last[10000], tot;
+public:
+	breakpoint() :tot(0) {}
+	void add() {
+		last[++tot] = -1;
+	}
+	void pop() {
+		tot--;
+	}
+	void debug(int line) {
+		if (!brp[line] || last[tot] == line)
 			return;
+		last[tot] = line;
 		std::string temp;
 		mydata* x;
 		while (std::cin >> temp) {
@@ -1105,7 +1113,7 @@ class debug {
 		}
 	}
 };
-debug de;
+breakpoint debug;
 
 class file{
 private:
@@ -1292,6 +1300,7 @@ public:
 		}
 	}
 	void runmain() {
+		debug.lastreset();
 		function fun;
 		std::vector<int> pra;
 		mydata* y = vardb.find(name("main"));
@@ -1305,7 +1314,12 @@ public:
 
 inline int mywhile::run() {
 	int ans = None;
-	while (judge.judge()) {
+	while (1) {
+		debug.add();
+		if (!judge.judge()) {
+			debug.pop();
+			break;
+		}
 		vardb.newfloor();
 		for (int i = 0; i < sta.size(); i++) {
 			ans = sta[i].run();
@@ -1313,6 +1327,7 @@ inline int mywhile::run() {
 				break;
 		}
 		vardb.deletefloor();
+		debug.pop();
 		if (ans == CONTINUE) {
 			ans = None;
 		}
@@ -1330,6 +1345,7 @@ inline int mywhile::run() {
 inline int dountil::run() {
 	int ans = None;
 	do {
+		debug.add();
 		vardb.newfloor();
 		for (int i = 0; i < sta.size(); i++) {
 			ans = sta[i].run();
@@ -1342,12 +1358,19 @@ inline int dountil::run() {
 		}
 		else if (ans == BREAK) {
 			ans = None;
+			debug.pop();
 			break;
 		}
 		else if (ans == RETURN) {
+			debug.pop();
 			break;
 		}
-	} while (!judge.judge());
+		if (judge.judge()) {
+			debug.pop();
+			break;
+		}
+		debug.pop();
+	} while (1);
 	return ans;
 }
 
@@ -1375,6 +1398,7 @@ inline int ifelse::run() {
 
 inline int function::run() {
 	int ans = 0;
+	debug.add();
 	vardb.newfloor();
 	for (int i = 0; i < pnum; i++)
 		sta[i].init();
@@ -1384,6 +1408,7 @@ inline int function::run() {
 			break;
 	}
 	vardb.deletefloor();
+	debug.pop();
 	if (ans == None) {
 		std::cout << "º¯ÊýÎÞ·µ»ØÖµ" << std::endl;
 		exit(0);
@@ -1410,10 +1435,12 @@ inline int function::run() {
 }
 
 inline bool minstatement::judge() {		//¸ù¾Ý½âÎöºÃµÄtokenÅÐ¶ÏÓï¾ä·µ»ØÖµÊÇ·ñÎªÕæ
+	debug.debug(line);
 	return cal.solve(tok).value == "1";
 }
 
 inline int minstatement::run() {		//Ö´ÐÐÓï¾ä,ÈôÊÇreturnÀàÐÍ£¬½«returnÄÚÈÝÑ¹ÈëÕ»ÄÚ²¢·µ»ØRETURN¡£ÈôÊÇcontinue£¬·µ»ØCONTINUE¡£ÈôÊÇbreak·µ»ØBREAK,·ñÔò·µ»ØNone¡£
+	debug.debug(line);
 	token t = cal.solve(tok);
 	if (t.type == RINT) {
 		stk.add(token(INT, t.value));
@@ -1437,6 +1464,7 @@ inline int minstatement::run() {		//Ö´ÐÐÓï¾ä,ÈôÊÇreturnÀàÐÍ£¬½«returnÄÚÈÝÑ¹ÈëÕ»Ä
 }
 
 inline void minstatement::runinit() {
+	debug.debug(line);
 	token t = que.pop(), a;
 	for (int i = 0; i < tok.size(); i++) {
 		if (tok[i].type == VARIABLE) {

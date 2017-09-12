@@ -80,8 +80,8 @@ public:
 		ramtot += sizeof(minstatement);
 		((minstatement*)(ram + p))->init(one, _line);
 	}
-	statement(std::string one, std::string two, int _type);
-	statement(std::string one, std::string two, std::string three);
+	statement(int _line, std::string one, std::string two, int _type);
+	statement(int _line, std::string one, std::string two, std::string three);
 	void init() {		//执行声明，并从队列中取值初始化
 		if (type != MINSTATEMENT) {
 			std::cout << "执行声明语句类型不符" << std::endl;
@@ -396,19 +396,19 @@ inline int statement::run() {
 		return ((dountil*)(ram + p))->run();
 }
 
-inline statement::statement(std::string one,int _line, std::string two, int _type = MYWHILE) {
+inline statement::statement(int _line, std::string one, std::string two, int _type = MYWHILE) {
 	type = _type;
 	if (type == MYWHILE) {
 		ram[ramtot++] = 1;
 		p = ramtot;
 		ramtot += sizeof(mywhile);
-		((mywhile*)(ram + p))->init(one,_line, two);
+		((mywhile*)(ram + p))->init(one, two, _line);
 	}
 	else if (type == DOUNTIL) {
 		ram[ramtot++] = 1;
 		p = ramtot;
 		ramtot += sizeof(dountil);
-		((dountil*)(ram + p))->init(one, two);
+		((dountil*)(ram + p))->init(one, two, _line);
 	}
 	else {
 		std::cout << "语句类型不符" << std::endl;
@@ -416,12 +416,12 @@ inline statement::statement(std::string one,int _line, std::string two, int _typ
 	}
 }
 
-inline statement::statement(std::string one, std::string two, std::string three) {
+inline statement::statement(int _line, std::string one, std::string two, std::string three) {
 	type = IFELSE;
 	ram[ramtot++] = 1;
 	p = ramtot;
 	ramtot += sizeof(IFELSE);
-	((ifelse*)(ram + p))->init(one, two, three);
+	((ifelse*)(ram + p))->init(one, _line, two, three);
 }
 
 
