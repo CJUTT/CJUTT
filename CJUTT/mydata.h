@@ -64,9 +64,6 @@ public:
 		strtotoken(str, tok);
 	}
 	int run();
-	~minstatement() {
-		tok.clear();
-	}
 };
 
 class statement{
