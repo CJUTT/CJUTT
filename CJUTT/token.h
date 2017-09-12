@@ -113,6 +113,9 @@ public:
 			exit(0);
 			return token();
 		}
+		else if (a.type == INT && b.type == INT) {
+			return token(INT, a.toString(int(pow(a._toInt(a.value), b._toInt(b.value)))));
+		}
 		return token(REAL, a.toString(pow(a._toFloat(a.value), b._toFloat(b.value))));
 	}
 

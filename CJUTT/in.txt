@@ -1,10 +1,12 @@
-int sub(int a,int b){
-	return a+b;
-}
 int main()
 {
-  int a=1,b=2;
-  out sub(sub(a,b),sub(a,sub(a,b)));
+  int a,b;
+  a=100000;
+  b=432;
+  out a;
   out "\n";
-  return 0
+  out b;
+  out "\n";
+  return 0;
 }
+//??

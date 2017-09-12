@@ -3,6 +3,46 @@
 
 #include "scan.h"
 
+typedef std::string string;
+typedef float real;
+
+class myint {
+private:
+	unsigned char l;
+	char r;
+public:
+	myint() {
+		l = r = 0;
+	}
+	myint(int x) {
+		x %= 65536;
+		//cout << x << endl;
+		l = x / 256;
+		r = x % 256;
+		if (r > 0 && x < 0) {
+			l--;
+		}
+		if (r < 0 && x > 0) {
+			l++;
+		}
+	}
+	operator int() {
+		int x = l * 256 + r;
+		if (l > 128 || (l == 128 && r >= 0)) {
+			x -= 65536;
+		}
+		return x;
+	}
+};
+
+const int sizeof_int = sizeof(myint);
+const int sizeof_real = sizeof(real);
+const int sizeof_string = sizeof(string);
+
+#define RAMMAX 100000
+char ram[RAMMAX];
+int ramtot = 0;
+
 bool strisempty(std::string &str) {
 	int i;
 	for (i = 0; i < str.size(); i++) {
@@ -18,28 +58,37 @@ class minstatement{
 private:
 	std::vector<token> tok;
 public:
-	minstatement() :tok(){}
-	minstatement(std::string str) {
+	bool judge();		//判断语句返回值是否为真
+	void runinit();		//执行声明，并从队列中取值初始化
+	void init(std::string str) {
 		strtotoken(str, tok);
 	}
-	bool judge();		//判断语句返回值是否为真
-	void init();		//执行声明，并从队列中取值初始化
 	int run();
+	~minstatement() {
+		tok.clear();
+	}
 };
 
 class statement{
 private:
 	int type;
-	void *p;
+	int p;
 public:
 	statement(std::string one) {
 		type = MINSTATEMENT;
-		p = new minstatement(one);
+		ram[ramtot++] = 1;
+		p = ramtot;
+		ramtot += sizeof(minstatement);
+		((minstatement*)(ram + p))->init(one);
 	}
 	statement(std::string one, std::string two, int _type);
 	statement(std::string one, std::string two, std::string three);
 	void init() {		//执行声明，并从队列中取值初始化
-		((minstatement*)p)->init();
+		if (type != MINSTATEMENT) {
+			std::cout << "执行声明语句类型不符" << std::endl;
+			exit(0);
+		}
+		((minstatement*)(ram + p))->runinit();
 	}
 	int run();
 };
@@ -51,11 +100,13 @@ private:
 	minstatement judge;
 	std::vector<statement>sta;
 public:
-	mywhile(std::string _judge, std::string s) :judge(_judge) {
+	void init(std::string _judge, std::string s) {
 		if (strisempty(_judge)) {
 			std::cout << "判断式不可为空" << std::endl;
 			exit(0);
 		}
+		sta.clear();
+		judge.init(_judge);
 		strtosta(s, sta);
 	}
 	int run();
@@ -66,13 +117,13 @@ private:
 	std::vector<statement>sta;
 	minstatement judge;
 public:
-	dountil(std::string s, std::string _judge) {
+	void init(std::string s, std::string _judge) {
 		strtosta(s, sta);
 		if (strisempty(_judge)) {
 			std::cout << "判断式不可为空" << std::endl;
 			exit(0);
 		}
-		judge = minstatement(_judge);
+		judge.init(_judge);
 	}
 	int run();
 };
@@ -82,11 +133,12 @@ private:
 	minstatement judge;
 	std::vector<statement>first, second;
 public:
-	ifelse(std::string _judge, std::string one, std::string two) :judge(_judge) {
+	void init(std::string _judge, std::string one, std::string two){
 		if (strisempty(_judge)) {
 			std::cout << "判断式不可为空" << std::endl;
 			exit(0);
 		}
+		judge.init(_judge);
 		strtosta(one, first);
 		strtosta(two, second);
 	}
@@ -100,15 +152,25 @@ public:
 	int type;
 	int pnum;		//参数个数
 	std::vector<statement> sta;
-	function() :type(None),pnum(0) {
+	void init() {
+		type = None;
+		pnum = 0;
+		sta.clear();
 		for (int i = 0; i < 3; i++)
 			next[i] = NULL;
+	}
+	function* newfunction() {
+		ram[ramtot++] = 1;
+		int pnow = ramtot;
+		ramtot += sizeof(function);
+		((function*)(ram + pnow))->init();
+		return (function*)(ram + pnow);
 	}
 	void add(std::vector<int>&a, std::string &s, int ty = INT) {			//重载函数（参数列表，函数内容，函数返回类型）
 		function *temp = this;
 		for (int i = 0; i < a.size(); i++) {
 			if (temp->next[a[i]] == NULL) {
-				temp->next[a[i]] = new function();
+				temp->next[a[i]] = newfunction();
 			}
 			temp = temp->next[a[i]];
 		}
@@ -134,11 +196,20 @@ public:
 		}
 		return temp;
 	}
+	void clear() {
+		for (int i = 0; i < 3; i++) {
+			if (next[i] == NULL)
+				continue;
+			next[i]->clear();
+		}
+		sta.clear();
+	}
 	~function() {
-		for (int i = 0; i < 3; i++)
-			delete next[i];
+		clear();
 	}
 };
+
+const int sizeof_function = sizeof(function);
 
 class name {		//查询标识/第一关键字
 	int l;				//标识字符串长度
@@ -172,67 +243,81 @@ struct mydata {		//数据存储结构
 	name key;	//查询标识/关键字
 	int type;	//数据类型:0为int,1为float，2为char*
 	int deep;	//所在层数
-	/*union {
-		myint _int;
-		float _real;
-		std::string _str;
-		function fun;
-	};*/
-	void *p;	//当前指针
+	int p;	//当前指针
 	mydata *f;	//同名上级指针
 	mydata *next;	//同层后继指针
-	mydata() { type = None; p = NULL; }
+	mydata() { type = None; p = None; }
 	mydata(name &n, int &now, mydata* &head, int ty = INT) {		//创建新数据节点
 		key = n;
 		type = ty;
-		if (type == INT)
-			p = new int;
-		else if (type == REAL)
-			p = new float;
-		else if (type == STRING)
-			p = new std::string;
-		else if (type == FUNCTION)
-			p = new function();
+		if (type == INT) {
+			ram[ramtot++] = 1;
+			p = ramtot;
+			ramtot += sizeof_int;
+			*((myint*)(ram + p)) = 0;
+		}
+		else if (type == REAL) {
+			ram[ramtot++] = 1;
+			p = ramtot;
+			ramtot += sizeof_real;
+			*((real*)(ram + p)) = 0.0;
+		}
+		else if (type == STRING) {
+			ram[ramtot++] = 1;
+			p = ramtot;
+			ramtot += sizeof_string;
+			*((string*)(ram + p)) = "";
+		}
+		else if (type == FUNCTION) {
+			ram[ramtot++] = 1;
+			p = ramtot;
+			ramtot += sizeof_function;
+			((function*)(ram + p))->init();
+		}
 		deep = now;
 		next = head;
 		head = this;
 	}
 	//根据type不同调用不同to函数，返回数据引用
-	int &toint() {
-		return *((int*)p);
+	myint &toint() {
+		return *((myint*)(ram + p));
 	}
-	float &toreal() {
-		return *((float*)p);
+	real &toreal() {
+		return *((real*)(ram + p));
 	}
-	std::string &tostring() {
-		return *((std::string*)p);
+	string &tostring() {
+		return *((std::string*)(ram + p));
 	}
 	function &tofunction() {
-		return *((function*)p);
+		return *((function*)(ram + p));
 	}
 	void out() {
 		if (type == INT) {
-			std::cout << toint() << std::endl;
+			std::cout << *((myint*)(ram + p)) << std::endl;
 		}
 		else if (type == REAL) {
-			std::cout << toreal() << std::endl;
+			std::cout << *((real*)(ram + p)) << std::endl;
 		}
 		else if (type == STRING) {
-			std::cout << tostring() << std::endl;
+			std::cout << *((string*)(ram + p)) << std::endl;
 		}
 		else if (type == FUNCTION) {
 			std::cout << "函数无法显示" << std::endl;
 		}
 	}
 	~mydata() {
-		if (type == INT)
-			delete (int*)p;
-		else if (type == REAL)
-			delete (float*)p;
-		else if (type == STRING)
-			delete (std::string *)p;
-		else if (type == FUNCTION)
-			delete (function *)p;
+		if (type == INT) {
+			*((myint*)(ram + p)) = 0;
+		}
+		else if (type == REAL) {
+			*((real*)(ram + p)) = 0.0;
+		}
+		else if (type == STRING) {
+			*((string*)(ram + p)) = "";
+		}
+		else if (type == FUNCTION) {
+			((function*)(ram + p))->clear();
+		}
 	}
 };
 
@@ -303,26 +388,41 @@ public:
 
 inline int statement::run() {
 	if (type == MINSTATEMENT)
-		return ((minstatement*)p)->run();
+		return ((minstatement*)(ram + p))->run();
 	else if (type == MYWHILE)
-		return ((mywhile*)p)->run();
+		return ((mywhile*)(ram + p))->run();
 	else if (type == IFELSE)
-		return ((ifelse*)p)->run();
+		return ((ifelse*)(ram + p))->run();
 	else if(type==DOUNTIL)
-		return ((dountil*)p)->run();
+		return ((dountil*)(ram + p))->run();
 }
 
 inline statement::statement(std::string one, std::string two, int _type = MYWHILE) {
 	type = _type;
-	if (type == MYWHILE)
-		p = new mywhile(one, two);
-	else
-		p = new dountil(one, two);
+	if (type == MYWHILE) {
+		ram[ramtot++] = 1;
+		p = ramtot;
+		ramtot += sizeof(mywhile);
+		((mywhile*)(ram + p))->init(one, two);
+	}
+	else if (type == DOUNTIL) {
+		ram[ramtot++] = 1;
+		p = ramtot;
+		ramtot += sizeof(dountil);
+		((dountil*)(ram + p))->init(one, two);
+	}
+	else {
+		std::cout << "语句类型不符" << std::endl;
+		exit(0);
+	}
 }
 
 inline statement::statement(std::string one, std::string two, std::string three) {
 	type = IFELSE;
-	p = new ifelse(one, two, three);
+	ram[ramtot++] = 1;
+	p = ramtot;
+	ramtot += sizeof(IFELSE);
+	((ifelse*)(ram + p))->init(one, two, three);
 }
 
 

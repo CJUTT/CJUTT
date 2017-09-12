@@ -314,6 +314,7 @@ public:
 				if (i - 1 >= 0 && i + 1 < buf.size()) {
 					token l = buf[i - 1], r = buf[i + 1];
 					x = l ^ r;
+					break;
 				}
 				else {
 					std::cout << "·Ç·¨µÄ³Ë·½ÔËËã" << std::endl;
@@ -332,7 +333,7 @@ public:
 			for (int j = i + 2; j < buf.size(); j++) {
 				nex.push_back(buf[j]);
 			}
-			solve_pow(nex);
+			return solve_pow(nex);
 		}
 		else {
 			token ret = solve_multidivmod(buf);
@@ -571,7 +572,7 @@ public:
 		}
 	}
 
-	token assign(int &x, std::vector<token> buf)
+	token assign(myint &x, std::vector<token> buf)
 	{
 		token right = solve(buf);
 		if (right.type == INT) {
@@ -632,7 +633,7 @@ public:
 				flag = 1;
 			}
 			if (temp_data->type == INT) {
-				int &t = temp_data->toint();
+				myint &t = temp_data->toint();
 				cur = assign(t, buf);
 			}
 			else if (temp_data->type == REAL) {
@@ -922,7 +923,7 @@ public:
 					std::stringstream sstr(s);
 					int x;//xÎª×ª»» 
 					sstr >> x;
-					int &t = aa->toint();
+					myint &t = aa->toint();
 					t = x;
 				}
 
@@ -991,7 +992,7 @@ public:
 					std::cout << "illegal variable" << std::endl;
 					exit(0);
 				}
-				int &t = temp_data1->toint();
+				myint &t = temp_data1->toint();
 				pt = t;
 			}
 			if (pt < 0) {
@@ -1011,7 +1012,7 @@ public:
 					std::cout << "illegal variable" << std::endl;
 					exit(0);
 				}
-				int &t = temp_data1->toint();
+				myint &t = temp_data1->toint();
 				pt = t;
 			}
 
@@ -1275,13 +1276,22 @@ public:
 			exit(0);
 		}
 		brp[x] = 0;
-		}
+	}
 	void set(int x) {
 		if (x < 0 || x >= 200) {
 			std::cout << "Ôö¼Ó¶ÏµãÊ§°Ü" << std::endl;
 			exit(0);
 		}
 		brp[x] = 1;
+	}
+	void brpinit() {
+		int n, k;
+		std::cin >> n;
+		reset();
+		for (int i = 0; i < n; i++) {
+			std::cin >> k;
+			set(k);
+		}
 	}
 	~file() {
 		vardb.deletefloor();
@@ -1421,7 +1431,7 @@ inline int minstatement::run() {		//Ö´ĞĞÓï¾ä,ÈôÊÇreturnÀàĞÍ£¬½«returnÄÚÈİÑ¹ÈëÕ»Ä
 	return None;
 }
 
-inline void minstatement::init() {
+inline void minstatement::runinit() {
 	token t = que.pop(), a;
 	for (int i = 0; i < tok.size(); i++) {
 		if (tok[i].type == VARIABLE) {
