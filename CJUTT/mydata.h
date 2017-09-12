@@ -56,11 +56,13 @@ void strtotoken(std::string str, std::vector<token> &tok);		//将一句字符串解析为
 
 class minstatement{
 private:
+	int line;
 	std::vector<token> tok;
 public:
 	bool judge();		//判断语句返回值是否为真
 	void runinit();		//执行声明，并从队列中取值初始化
-	void init(std::string str) {
+	void init(std::string str,int _line) {
+		line = _line;
 		strtotoken(str, tok);
 	}
 	int run();
@@ -71,12 +73,12 @@ private:
 	int type;
 	int p;
 public:
-	statement(std::string one) {
+	statement(std::string one,int _line) {
 		type = MINSTATEMENT;
 		ram[ramtot++] = 1;
 		p = ramtot;
 		ramtot += sizeof(minstatement);
-		((minstatement*)(ram + p))->init(one);
+		((minstatement*)(ram + p))->init(one, _line);
 	}
 	statement(std::string one, std::string two, int _type);
 	statement(std::string one, std::string two, std::string three);
@@ -97,13 +99,13 @@ private:
 	minstatement judge;
 	std::vector<statement>sta;
 public:
-	void init(std::string _judge, std::string s) {
+	void init(std::string _judge, std::string s,int _line) {
 		if (strisempty(_judge)) {
 			std::cout << "判断式不可为空" << std::endl;
 			exit(0);
 		}
 		sta.clear();
-		judge.init(_judge);
+		judge.init(_judge, _line);
 		strtosta(s, sta);
 	}
 	int run();
@@ -114,13 +116,13 @@ private:
 	std::vector<statement>sta;
 	minstatement judge;
 public:
-	void init(std::string s, std::string _judge) {
+	void init(std::string s, std::string _judge,int _line) {
 		strtosta(s, sta);
 		if (strisempty(_judge)) {
 			std::cout << "判断式不可为空" << std::endl;
 			exit(0);
 		}
-		judge.init(_judge);
+		judge.init(_judge,_line);
 	}
 	int run();
 };
@@ -130,12 +132,12 @@ private:
 	minstatement judge;
 	std::vector<statement>first, second;
 public:
-	void init(std::string _judge, std::string one, std::string two){
+	void init(std::string _judge,int _line, std::string one, std::string two){
 		if (strisempty(_judge)) {
 			std::cout << "判断式不可为空" << std::endl;
 			exit(0);
 		}
-		judge.init(_judge);
+		judge.init(_judge, _line);
 		strtosta(one, first);
 		strtosta(two, second);
 	}
@@ -394,13 +396,13 @@ inline int statement::run() {
 		return ((dountil*)(ram + p))->run();
 }
 
-inline statement::statement(std::string one, std::string two, int _type = MYWHILE) {
+inline statement::statement(std::string one,int _line, std::string two, int _type = MYWHILE) {
 	type = _type;
 	if (type == MYWHILE) {
 		ram[ramtot++] = 1;
 		p = ramtot;
 		ramtot += sizeof(mywhile);
-		((mywhile*)(ram + p))->init(one, two);
+		((mywhile*)(ram + p))->init(one,_line, two);
 	}
 	else if (type == DOUNTIL) {
 		ram[ramtot++] = 1;

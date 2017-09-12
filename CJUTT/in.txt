@@ -1,12 +1,23 @@
 int main()
+
+
 {
-  int a,b;
-  a=100000;
-  b=432;
-  out a;
-  out "\n";
-  out b;
-  out "\n";
-  return 0;
+	i = 2;
+	if i == 2
+
+
+	{
+
+		sdajisd = f();
+
+	}
+
+	out sdajisd;
+	return 0;
+
 }
-//??
+
+f()
+{
+	return 0;
+}

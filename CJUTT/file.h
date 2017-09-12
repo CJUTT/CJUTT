@@ -1057,13 +1057,63 @@ public:
 
 calculate cal;
 
+class debug {
+	int line;
+	int last;
+	bool brp[200];
+	void de() {
+		if (!brp[line])
+			return;
+		std::string temp;
+		mydata* x;
+		while (std::cin >> temp) {
+			if (temp == "return")
+				return;
+			x = vardb.find(temp);
+			if (x == NULL) {
+				std::cout << "变量未定义" << std::endl;
+			}
+			else {
+				x->out();
+			}
+		}
+	}
+	void reset() {
+		std::memset(brp, 0, sizeof(brp));
+	}
+	void reset(int x) {
+		if (x < 0 || x >= 200) {
+			std::cout << "删除断点失败" << std::endl;
+			exit(0);
+		}
+		brp[x] = 0;
+	}
+	void set(int x) {
+		if (x < 0 || x >= 200) {
+			std::cout << "增加断点失败" << std::endl;
+			exit(0);
+		}
+		brp[x] = 1;
+	}
+	void brpinit() {
+		int n, k;
+		std::cin >> n;
+		reset();
+		for (int i = 0; i < n; i++) {
+			std::cin >> k;
+			set(k);
+		}
+	}
+};
+debug de;
+
 class file{
 private:
 	char buf[100000];
-
+	
 	void declare_fun(std::vector<token> buf) {
 		for (std::vector<token>::iterator it = buf.begin(); it != buf.end(); it++) {
-			while (it != buf.end() && (*it).value == "\n") {
+			while (it != buf.end() && (*it).type == NEXTLINE) {
 				it = buf.erase(it);
 			}
 			if (it == buf.end())
@@ -1208,11 +1258,9 @@ private:
 	}
 
 public:
-	bool brp[200];
 	std::string str;
 	int tot;
-	int line;
-	file(std::string fname) :tot(0), line(1) {
+	file(std::string fname) :tot(0){
 		vardb.newfloor();
 		std::ifstream in;
 		in.open(fname, std::ios::in);
@@ -1222,7 +1270,7 @@ public:
 			str = str + std::string(buf) + "\n";
 		}
 		in.close();
-		str = scan(str).toString();
+		str = scan().firstToString(str);
 		}
 
 	void declare() {
@@ -1249,49 +1297,6 @@ public:
 		mydata* y = vardb.find(name("main"));
 		fun = *y->tofunction().find(pra);
 		fun.run();
-	}
-	void debug() {
-		if (!brp[line])
-			return;
-		std::string temp;
-		mydata* x;
-		while (std::cin >> temp) {
-			if (temp == "return")
-				return;
-			x = vardb.find(temp);
-			if (x == NULL) {
-				std::cout << "变量未定义" << std::endl;
-			}
-			else{
-				x->out();
-			}
-		}
-	}
-	void reset() {
-		std::memset(brp, 0, sizeof(brp));
-	}
-	void reset(int x) {
-		if (x < 0 || x >= 200) {
-			std::cout << "删除断点失败" << std::endl;
-			exit(0);
-		}
-		brp[x] = 0;
-	}
-	void set(int x) {
-		if (x < 0 || x >= 200) {
-			std::cout << "增加断点失败" << std::endl;
-			exit(0);
-		}
-		brp[x] = 1;
-	}
-	void brpinit() {
-		int n, k;
-		std::cin >> n;
-		reset();
-		for (int i = 0; i < n; i++) {
-			std::cin >> k;
-			set(k);
-		}
 	}
 	~file() {
 		vardb.deletefloor();
@@ -1452,13 +1457,6 @@ inline void strtotoken(std::string str, std::vector<token> &tok) {		//将一句字符
 
 inline void strtosta(std::string str, std::vector<statement> &sta) {		//将一段字符串解析为语句组
 	scan sc = scan(str);
-	for (std::vector<token>::iterator it = sc.v.begin(); it != sc.v.end(); it++) {
-		while ((it != sc.v.end()) && (*it).value == "\n") {
-			it = sc.v.erase(it);
-		}
-		if (it == sc.v.end())
-			break;
-	}
 	int i = 0;
 	while (i < sc.v.size()) {
 		if (sc.v[i].value == "if") {

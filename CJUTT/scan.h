@@ -9,6 +9,7 @@ private:
 	std::vector<token> stringToVectorToken(std::string buf);
 public:
 	std::vector<token> v;
+	scan() {}
 	scan(char _buf[]) {
 		pos = 0;
 		v = stringToVectorToken(std::string(_buf));
@@ -35,6 +36,7 @@ public:
 	token next();
 	bool end();
 	std::string toString();
+	std::string firstToString(std::string);
 };
 
 inline bool scan::end() { return pos >= v.size(); }
@@ -52,9 +54,15 @@ inline std::vector<token> scan::stringToVectorToken(std::string buf)
 	int i = 0;
 	while (i < buf.size()) {
 		// »»ÐÐ
-		if (buf[i] == '\n') {
+		if (buf[i] == '@') {
+			std::string str = "";
 			i++;
-			v.push_back(token(NEXTLINE, "\n"));
+			while (buf[i] != '@') {
+				str.append(1, buf[i]);
+				i++;
+			}
+			i++;
+			v.push_back(token(NEXTLINE, token().toString(token()._toInt(str))));
 		}
 		// tab
 		else if (buf[i] == '\t') {
@@ -340,6 +348,9 @@ inline std::string scan::toString()
 		else if (v[i].type == CBRACKET) {
 			ret = ret + "{" + v[i].value + "}";
 		}
+		else if (v[i].type == NEXTLINE) {
+			ret = ret + "@" + v[i].value + "@";
+		}
 		else if (v[i].value == "int" || v[i].value == "real" || v[i].value == "string" || v[i].value == "while" || v[i].value == "if" || v[i].value == "else" || v[i].value == "do" || v[i].value == "until" || v[i].value == "return" || v[i].value == "in" || v[i].value == "out" || v[i].value == "break" || v[i].value == "continue") {
 			ret = ret + v[i].value + " ";
 		}
@@ -348,6 +359,33 @@ inline std::string scan::toString()
 		}
 	}
 	return ret;
+}
+
+inline std::string scan::firstToString(std::string s)
+{
+	for (int i = 0; i < s.size(); i++) {
+		if (s[i] == '@') {
+			std::cout << "·Ç·¨×Ö·û@" << std::endl;
+			exit(0);
+		}
+	}
+	std::string str = "";
+	int line = 1;
+	str.append(1, '@');
+	str = str + token().toString(line);
+	str.append(1, '@');
+	for (int i = 0; i < s.size(); i++) {
+		if (s[i] == '\n') {
+			line++;
+			str.append(1, '@');
+			str = str + token().toString(line);
+			str.append(1, '@');
+		}
+		else {
+			str.append(1, s[i]);
+		}
+	}
+	return str;
 }
 
 #endif
