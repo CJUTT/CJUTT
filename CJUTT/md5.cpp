@@ -7,7 +7,7 @@ int main(int argc, char *argv[]) {
 	fname = "in.txt";
 	//while (std::cin >> fname) {
 		file f = file(fname);
-		//f.brpinit();
+		f.intype();
 		f.declare();
 		f.runmain();
 	//}

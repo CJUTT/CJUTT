@@ -1061,56 +1061,136 @@ calculate cal;
 class breakpoint {
 	bool brp[200];
 	int last[10000], tot;
+	void reset() {
+		std::memset(brp, 0, sizeof(brp));
+	}
+	bool reset(int x) {
+		if (x < 0 || x >= 200) {
+			std::cout << "断点行号不合法" << std::endl;
+			return 0;
+		}
+		brp[x] = 0;
+		return 1;
+	}
+	bool set(int x) {
+		if (x < 0 || x >= 200) {
+			std::cout << "断点行号不合法" << std::endl;
+			return 0;
+		}
+		brp[x] = 1;
+		return 1;
+	}
+	void brpset() {
+		while (1) {
+			int n;
+			std::cout << "请输入需要设置的断点个数,输入0退出本次设置\n";
+			std::cin >> n;
+			if (n==0)
+				return;
+			else if (n > 0) {
+				int  k;
+				std::cout << "请输入" << n << "个断点的行号\n";
+				while(n){
+					std::cin >> k;
+					if (set(k)) {
+						n--;
+					}
+				}
+				break;
+			}
+			else {
+				std::cout << "输入不合法\n";
+			}
+		}
+	}
+	void brpdelete() {
+		while (1) {
+			int n;
+			std::cout << "请输入需要删除的断点个数,输入0退出本次设置\n";
+			std::cin >> n;
+			if (n == 0)
+				return;
+			else if (n > 0) {
+				int  k;
+				std::cout << "请输入" << n << "个断点的行号\n";
+				while (n) {
+					std::cin >> k;
+					if (reset(k)) {
+						n--;
+					}
+				}
+				break;
+			}
+			else {
+				std::cout << "输入不合法\n";
+			}
+		}
+	}
+	void show() {
+		std::cout << "请输入变量名\n";
+		std::string temp;
+		mydata* x;
+		std::cin >> temp;
+		x = vardb.find(temp);
+		if (x == NULL) {
+			std::cout << "变量未定义" << std::endl;
+		}
+		else {
+			x->out();
+		}
+	}
 public:
-	breakpoint() :tot(0) {}
+	breakpoint() :tot(0) { reset();}
 	void add() {
 		last[++tot] = -1;
 	}
 	void pop() {
 		tot--;
 	}
+	void init() {
+		std::string temp;
+		while (1) {
+			std::cout << "输入go：开始运行，set：设置断点，reset删除断点，exit：退出程序\n";
+			std::cin >> temp;
+			if (temp == "go")
+				return;
+			else if (temp == "set")
+				brpset();
+			else if (temp == "reset")
+				brpdelete();
+			else if (temp == "exit") {
+				std::cout << "退出程序\n";
+				exit(0);
+			}
+			else {
+				std::cout << "输入不合规范,请重新输入\n";
+			}
+		}
+	}
 	void debug(int line) {
 		if (!brp[line] || last[tot] == line)
 			return;
+		std::cout << "当前行号为" << line << std::endl;
 		last[tot] = line;
 		std::string temp;
-		mydata* x;
-		while (std::cin >> temp) {
-			if (temp == "return")
+		while (1) {
+			std::cout << "输入gonext：继续运行，set：设置断点，reset删除断点，show：显示变量，exit：退出程序\n";
+			std::cin >> temp;
+			if (temp == "gonext")
 				return;
-			x = vardb.find(temp);
-			if (x == NULL) {
-				std::cout << "变量未定义" << std::endl;
+			else if (temp == "set")
+				brpset();
+			else if (temp == "reset")
+				brpdelete();
+			else if (temp == "show")
+				show();
+			else if (temp == "exit") {
+				std::cout << "退出程序\n";
+				exit(0);
 			}
 			else {
-				x->out();
+				std::cout << "输入不合规范,请重新输入\n";
 			}
-		}
-	}
-	void reset() {
-		std::memset(brp, 0, sizeof(brp));
-	}
-	void reset(int x) {
-		if (x < 0 || x >= 200) {
-			std::cout << "删除断点失败" << std::endl;
-			exit(0);
-		}
-		brp[x] = 0;
-	}
-	void set(int x) {
-		if (x < 0 || x >= 200) {
-			std::cout << "增加断点失败" << std::endl;
-			exit(0);
-		}
-		brp[x] = 1;
-	}
-	void brpinit() {
-		int n, k;
-		std::cin >> n;
-		reset();
-		for (int i = 0; i < n; i++) {
-			std::cin >> k;
-			set(k);
 		}
 	}
 };
@@ -1270,7 +1350,7 @@ private:
 public:
 	std::string str;
 	int tot;
-	file(std::string fname) :tot(0){
+	file(std::string fname) :tot(0) {
 		vardb.newfloor();
 		std::ifstream in;
 		in.open(fname, std::ios::in);
@@ -1281,8 +1361,27 @@ public:
 		}
 		in.close();
 		str = scan().firstToString(str);
+	}
+	void intype() {
+		std::string temp;
+		std::cout << "请选择运行模式，输入1正常模式，输入2调试模式，输入3退出程序。\n";
+		while (std::cin >> temp) {
+			if (temp == "1") {
+				break;
+			}
+			else if (temp == "2") {
+				debug.init();
+				break;
+			}
+			else if (temp == "3") {
+				std::cout << "退出程序\n";
+				exit(0);
+			}
+			else {
+				std::cout << "输入不合规范,请重新输入\n";
+			}
 		}
-
+	}
 	void declare() {
 		scan sc = scan(str);
 		std::vector<token> temp;
