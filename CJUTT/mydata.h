@@ -258,19 +258,19 @@ struct mydata {		//数据存储结构
 			ram[ramtot++] = 1;
 			p = ramtot;
 			ramtot += sizeof_int;
-			*((myint*)(ram + p)) = 0;
+			memset(ram + p, 0, sizeof_int);
 		}
 		else if (type == REAL) {
 			ram[ramtot++] = 1;
 			p = ramtot;
 			ramtot += sizeof_real;
-			*((real*)(ram + p)) = 0.0;
+			memset(ram + p, 0, sizeof_real);
 		}
 		else if (type == STRING) {
 			ram[ramtot++] = 1;
 			p = ramtot;
 			ramtot += sizeof_string;
-			*((string*)(ram + p)) = "";
+			memset(ram + p, 0, sizeof_string);
 		}
 		else if (type == FUNCTION) {
 			ram[ramtot++] = 1;
