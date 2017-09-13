@@ -17,6 +17,7 @@ public:
 	scan(std::string _buf) {
 		pos = 0;
 		v = stringToVectorToken(_buf);
+		int x = 0;
 	}
 	scan(std::vector<token> _v) {
 		pos = 0;

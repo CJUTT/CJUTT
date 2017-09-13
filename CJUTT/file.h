@@ -1,4 +1,4 @@
-#ifndef _FILE_H
+#ifndef _FILE_H_
 #define _FILE_H_
 
 #include "variable.h"
@@ -14,7 +14,7 @@ public:
 	}
 	token solve(std::vector<token> buf) {
 		for (std::vector<token>::iterator it = buf.begin(); it != buf.end(); it++) {
-			while (it != buf.end() && (*it).value == "\n") {
+			while (it != buf.end() && (*it).type == NEXTLINE) {
 				it = buf.erase(it);
 			}
 			if (it == buf.end())
@@ -68,7 +68,8 @@ public:
 			return ret;
 		}
 	}
-
+private:
+	// 优先处理括号
 	token solve_kuohao(std::vector<token> buf) {
 		std::vector<token> nex;
 		for (int i = 0; i < buf.size(); i++) {
@@ -108,7 +109,7 @@ public:
 		token ret = solve_fuzhi(nex);
 		return ret;
 	}
-
+	// 处理赋值
 	token solve_fuzhi(std::vector<token> buf) {
 		int i;
 		token cur;
@@ -145,7 +146,7 @@ public:
 		if (x.type >= 17 && x.type <= 30) return true;
 		return false;
 	}
-
+	// 计算正负号
 	token solve_zhengfu(std::vector<token> buf) {
 		std::vector<token> nex;
 		int flag = 1;
@@ -195,7 +196,7 @@ public:
 		token ret = solve_fei(nex);
 		return ret;
 	}
-
+	// 计算逻辑非
 	token solve_fei(std::vector<token> buf) {
 		int i;
 		token cur;
@@ -236,7 +237,7 @@ public:
 			return ret;
 		}
 	}
-
+	// 计算字符串删除
 	token solve_jing(std::vector<token> buf) {
 		std::vector<token> nex;
 		int i;
@@ -298,7 +299,7 @@ public:
 			return ret;
 		}
 	}
-
+	// 计算乘方
 	token solve_pow(std::vector<token> buf) {
 		token x;
 		int i = -1;
@@ -340,7 +341,7 @@ public:
 			return ret;
 		}
 	}
-
+	// 计算乘除取模
 	token solve_multidivmod(std::vector<token> buf) {
 		std::vector<token> nex;
 		std::deque<token> q;
@@ -385,7 +386,7 @@ public:
 		}
 		return solve_addminus(nex);
 	}
-
+	// 计算加减
 	token solve_addminus(std::vector<token> buf) {
 		std::vector<token> temp;
 		std::deque<token> q;
@@ -440,7 +441,7 @@ public:
 		}
 		return solve_xiaoyu(temp);
 	}
-
+	// 计算小于 大于 小于等于 大于等于
 	token solve_xiaoyu(std::vector<token> buf) {
 		std::vector<token> temp;
 		std::deque<token> q;
@@ -491,7 +492,7 @@ public:
 		}
 		return solve_eq(temp);
 	}
-
+	// 计算等于不等于
 	token solve_eq(std::vector<token> buf) {
 		std::vector<token> temp;
 		std::deque<token> q;
@@ -531,7 +532,7 @@ public:
 		}
 		return solve_yuhuo(temp);
 	}
-
+	// 计算与或
 	token solve_yuhuo(std::vector<token> buf) {
 		std::deque<token> q;
 		for (int i = 0; i < buf.size(); i++) {
@@ -571,7 +572,7 @@ public:
 			exit(0);
 		}
 	}
-
+	// 赋值
 	token assign(myint &x, std::vector<token> buf)
 	{
 		token right = solve(buf);
@@ -588,7 +589,7 @@ public:
 		}
 		return right;
 	}
-
+	// 赋值
 	token assign(float & x, std::vector<token> buf)
 	{
 		token right = solve(buf);
@@ -604,7 +605,7 @@ public:
 		}
 		return right;
 	}
-
+	// 赋值
 	token assign(std::string & x, std::vector<token> buf)
 	{
 		token right = solve(buf);
@@ -617,7 +618,7 @@ public:
 		}
 		return right;
 	}
-
+	// 赋值
 	token assign(token x, std::vector<token> buf, int type = INT) {
 		int flag = 0;
 		token cur;
@@ -679,7 +680,7 @@ public:
 		ss << x;
 		return ss.str();
 	}
-
+	// 转换变量为常数
 	token var(token _var)
 	{
 		// 把变量(和函数)转换成常数
@@ -698,7 +699,7 @@ public:
 				return token(STRING, curdata->tostring());
 		}
 	}
-
+	// 转换函数为常数
 	token fun(token _fun) {
 		std::string funName = "", p = "";
 		std::vector<int> par;
@@ -1252,7 +1253,8 @@ private:
 				if (str[i] == ',')
 					str[i] = ';';
 			}
-			str.append(1, ';');
+			if (str.size() != 0)
+				str.append(1, ';');
 			if (buf[0].value == "int") {
 				vardb.newdata(name(function_name), pra, str + buf[2].value, INT);
 			}
@@ -1300,7 +1302,6 @@ public:
 		}
 	}
 	void runmain() {
-		debug.lastreset();
 		function fun;
 		std::vector<int> pra;
 		mydata* y = vardb.find(name("main"));
@@ -1481,13 +1482,25 @@ inline void minstatement::runinit() {
 
 inline void strtotoken(std::string str, std::vector<token> &tok) {		//将一句字符串解析为token组
 	tok = scan(str).v;
+	int x = 0;
 }
 
 inline void strtosta(std::string str, std::vector<statement> &sta) {		//将一段字符串解析为语句组
 	scan sc = scan(str);
-	int i = 0;
+	/*for (std::vector<token>::iterator it = sc.v.begin(); it != sc.v.end(); it++) {
+		while (it != sc.v.end() && (*it).type == NEXTLINE) {
+			it = sc.v.erase(it);
+		}
+		if (it == sc.v.end())
+			break;
+	}*/
+	int i = 0, line = 0;
 	while (i < sc.v.size()) {
-		if (sc.v[i].value == "if") {
+		if (sc.v[i].type == NEXTLINE) {
+			line = token()._toInt(sc.v[i].value);
+			i++;
+		}
+		else if (sc.v[i].value == "if") {
 			int j = i + 1;
 			std::vector<token> temp;
 			while (j < sc.v.size() && sc.v[j].type != CBRACKET) {
@@ -1499,11 +1512,11 @@ inline void strtosta(std::string str, std::vector<statement> &sta) {		//将一段字
 				exit(0);
 			}
 			else if (j + 2 < sc.v.size() && sc.v[j].type == CBRACKET && sc.v[j + 1].value == "else" && sc.v[j + 2].type == CBRACKET) {
-				sta.push_back(statement(scan(temp).toString(), sc.v[j].value, sc.v[j + 2].value));
+				sta.push_back(statement(line, scan(temp).toString(), sc.v[j].value, sc.v[j + 2].value));
 				i = j + 3;
 			}
 			else if (j < sc.v.size() && sc.v[j].type == CBRACKET) {
-				sta.push_back(statement(scan(temp).toString(), sc.v[j].value, ""));
+				sta.push_back(statement(line, scan(temp).toString(), sc.v[j].value, ""));
 				i = j + 1;
 			}
 			else {
@@ -1519,7 +1532,7 @@ inline void strtosta(std::string str, std::vector<statement> &sta) {		//将一段字
 				j++;
 			}
 			if (j < sc.v.size() && sc.v[j].type == CBRACKET) {
-				sta.push_back(statement(scan(temp).toString(), sc.v[j].value, MYWHILE));
+				sta.push_back(statement(line, scan(temp).toString(), sc.v[j].value, MYWHILE));
 				i = j + 1;
 			}
 			else {
@@ -1535,7 +1548,7 @@ inline void strtosta(std::string str, std::vector<statement> &sta) {		//将一段字
 					temp.push_back(sc.v[j]);
 					j++;
 				}
-				sta.push_back(statement(sc.v[i + 1].value, scan(temp).toString(), DOUNTIL));
+				sta.push_back(statement(line, sc.v[i + 1].value, scan(temp).toString(), DOUNTIL));
 				i = j + 1;
 			}
 			else {
@@ -1550,7 +1563,7 @@ inline void strtosta(std::string str, std::vector<statement> &sta) {		//将一段字
 				i = i + 1;
 			}
 			i = i + 1;
-			sta.push_back(statement(scan(temp).toString()));
+			sta.push_back(statement(scan(temp).toString(), line));
 		}
 	}
 }
