@@ -1482,7 +1482,6 @@ inline void minstatement::runinit() {
 
 inline void strtotoken(std::string str, std::vector<token> &tok) {		//将一句字符串解析为token组
 	tok = scan(str).v;
-	int x = 0;
 }
 
 inline void strtosta(std::string str, std::vector<statement> &sta) {		//将一段字符串解析为语句组

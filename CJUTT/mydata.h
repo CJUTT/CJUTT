@@ -62,6 +62,7 @@ public:
 	bool judge();		//判断语句返回值是否为真
 	void runinit();		//执行声明，并从队列中取值初始化
 	void init(std::string str,int _line) {
+		memset(this, 0, sizeof(minstatement));
 		line = _line;
 		strtotoken(str, tok);
 	}
@@ -100,6 +101,7 @@ private:
 	std::vector<statement>sta;
 public:
 	void init(std::string _judge, std::string s,int _line) {
+		memset(this, 0, sizeof(mywhile));
 		if (strisempty(_judge)) {
 			std::cout << "判断式不可为空" << std::endl;
 			exit(0);
@@ -117,6 +119,7 @@ private:
 	minstatement judge;
 public:
 	void init(std::string s, std::string _judge,int _line) {
+		memset(this, 0, sizeof(dountil));
 		strtosta(s, sta);
 		if (strisempty(_judge)) {
 			std::cout << "判断式不可为空" << std::endl;
@@ -133,6 +136,7 @@ private:
 	std::vector<statement>first, second;
 public:
 	void init(std::string _judge,int _line, std::string one, std::string two){
+		memset(this, 0, sizeof(ifelse));
 		if (strisempty(_judge)) {
 			std::cout << "判断式不可为空" << std::endl;
 			exit(0);
@@ -152,6 +156,7 @@ public:
 	int pnum;		//参数个数
 	std::vector<statement> sta;
 	void init() {
+		memset(this, 0, sizeof(function));
 		type = None;
 		pnum = 0;
 		sta.clear();
@@ -408,6 +413,7 @@ inline statement::statement(int _line, std::string one, std::string two, int _ty
 		ram[ramtot++] = 1;
 		p = ramtot;
 		ramtot += sizeof(dountil);
+		memset(ram + p, 0, sizeof(dountil));
 		((dountil*)(ram + p))->init(one, two, _line);
 	}
 	else {
@@ -420,7 +426,7 @@ inline statement::statement(int _line, std::string one, std::string two, std::st
 	type = IFELSE;
 	ram[ramtot++] = 1;
 	p = ramtot;
-	ramtot += sizeof(IFELSE);
+	ramtot += sizeof(ifelse);
 	((ifelse*)(ram + p))->init(one, _line, two, three);
 }
 
