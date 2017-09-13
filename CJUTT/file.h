@@ -1484,6 +1484,7 @@ inline void strtotoken(std::string str, std::vector<token> &tok) {		//将一句字符
 	tok = scan(str).v;
 }
 
+// if [judge], while [judge], until [judge] 必须在同一行233
 inline void strtosta(std::string str, std::vector<statement> &sta) {		//将一段字符串解析为语句组
 	scan sc = scan(str);
 	/*for (std::vector<token>::iterator it = sc.v.begin(); it != sc.v.end(); it++) {
@@ -1540,19 +1541,32 @@ inline void strtosta(std::string str, std::vector<statement> &sta) {		//将一段字
 			}
 		}
 		else if (sc.v[i].value == "do") {
-			if (i + 2 < sc.v.size() && sc.v[i + 1].type == CBRACKET && sc.v[i + 2].value == "until") {
-				int j = i + 3;
-				std::vector<token> temp;
-				while (sc.v[j].value != ";") {
-					temp.push_back(sc.v[j]);
-					j++;
+			token st;
+			std::vector<token> temp;
+			while (i < sc.v.size()) {
+				if (sc.v[i].type == NEXTLINE) {
+					line = token()._toInt(sc.v[i].value);
 				}
-				sta.push_back(statement(line, sc.v[i + 1].value, scan(temp).toString(), DOUNTIL));
-				i = j + 1;
+				else if (sc.v[i].type == CBRACKET) {
+					st = sc.v[i];
+				}
+				else if (sc.v[i].value == "until") {
+					break;
+				}
+				i++;
 			}
-			else {
+			i++;
+			if (i >= sc.v.size()) {
 				std::cout << "do until语句错误" << std::endl;
 				exit(0);
+			}
+			else {
+				while (i < sc.v.size() && sc.v[i].value != ";") {
+					temp.push_back(sc.v[i]);
+					i++;
+				}
+				i++;
+				sta.push_back(statement(line, st.value, scan(temp).toString(), DOUNTIL));
 			}
 		}
 		else {
