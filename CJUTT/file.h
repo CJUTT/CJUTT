@@ -584,7 +584,6 @@ private:
 		}
 		else if (right.type == REAL) {
 			x = tofloat(right.value);
-			std::cerr << "warn:float×ª»»µ½int" << std::endl;
 		}
 		else {
 			std::cerr << "ÀàÐÍ²»Æ¥Åä¡£" << std::endl;
@@ -1603,34 +1602,63 @@ inline void strtosta(std::string str, std::vector<statement> &sta) {		//½«Ò»¶Î×Ö
 			i++;
 		}
 		else if (sc.v[i].value == "if") {
-			int j = i + 1;
+			int j = i + 1, l = i, r = i;
 			std::vector<token> temp;
-			while (j < sc.v.size() && sc.v[j].type != CBRACKET) {
+			while (j < sc.v.size() && sc.v[j].type != CBRACKET && sc.v[j].type != NEXTLINE) {
 				temp.push_back(sc.v[j]);
 				j++;
 			}
-			if (j + 2 < sc.v.size() && sc.v[j].type == CBRACKET && sc.v[j + 1].value == "else" && sc.v[j + 2].type != CBRACKET) {
-				std::cerr << "elseºóÃæÄ¨ÓÍ´óÀ¨ºÅ" << std::endl;
+			if (temp.size() == 0) {
+				std::cerr << "ifÓï¾ä´íÎó:ifºóÃæÄ¨ÓÍÅÐ¶ÏÊ½" << std::endl;
 				exit(0);
 			}
-			else if (j + 2 < sc.v.size() && sc.v[j].type == CBRACKET && sc.v[j + 1].value == "else" && sc.v[j + 2].type == CBRACKET) {
-				sta.push_back(statement(line, scan(temp).toString(), sc.v[j].value, sc.v[j + 2].value));
-				i = j + 3;
+			while (j < sc.v.size() && sc.v[j].type == NEXTLINE) {
+				j++;
 			}
-			else if (j < sc.v.size() && sc.v[j].type == CBRACKET) {
-				sta.push_back(statement(line, scan(temp).toString(), sc.v[j].value, ""));
-				i = j + 1;
+			if (j < sc.v.size() && sc.v[j].type == CBRACKET) {
+				l = j;
+				j++;
+				while (j < sc.v.size() && sc.v[j].type == NEXTLINE) {
+					j++;
+				}
+				if (sc.v[j].value == "else") {
+					j++;
+					while (j < sc.v.size() && sc.v[j].type == NEXTLINE) {
+						j++;
+					}
+					r = j;
+					if (j < sc.v.size() && sc.v[j].type == CBRACKET) {
+						sta.push_back(statement(line, scan(temp).toString(), sc.v[l].value, sc.v[r].value));
+						i = j + 1;
+					}
+					else {
+						std::cerr << "ifÓï¾ä´íÎó:elseºóÃæÄ¨ÓÍ´óÀ¨ºÅ" << std::endl;
+						exit(0);
+					}
+				}
+				// if ºó Ã»ÓÐ else
+				else {
+					sta.push_back(statement(line, scan(temp).toString(), sc.v[l].value, ""));
+					i = j;
+				}
 			}
 			else {
-				std::cerr << "ifÓï¾ä´íÎó" << std::endl;
+				std::cerr << "ifÓï¾ä´íÎó:ifºóÃæÄ¨ÓÍ´óÀ¨ºÅ" << std::endl;
 				exit(0);
 			}
 		}
 		else if (sc.v[i].value == "while") {
 			int j = i + 1;
 			std::vector<token> temp;
-			while (j < sc.v.size() && sc.v[j].type != CBRACKET) {
+			while (j < sc.v.size() && sc.v[j].type != CBRACKET && sc.v[j].type != NEXTLINE) {
 				temp.push_back(sc.v[j]);
+				j++;
+			}
+			if (temp.size() == 0) {
+				std::cerr << "whileÓï¾ä´íÎó:whileºóÃæÄ¨ÓÍÅÐ¶ÏÊ½" << std::endl;
+				exit(0);
+			}
+			while (j < sc.v.size() && sc.v[j].type == NEXTLINE) {
 				j++;
 			}
 			if (j < sc.v.size() && sc.v[j].type == CBRACKET) {
@@ -1638,7 +1666,7 @@ inline void strtosta(std::string str, std::vector<statement> &sta) {		//½«Ò»¶Î×Ö
 				i = j + 1;
 			}
 			else {
-				std::cerr << "whileÓï¾ä´íÎó" << std::endl;
+				std::cerr << "whileÓï¾ä´íÎó:whileºóÄ¨ÓÍ´óÀ¨ºÅ" << std::endl;
 				exit(0);
 			}
 		}

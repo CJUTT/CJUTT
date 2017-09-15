@@ -35,10 +35,6 @@ public:
 	}
 };
 
-const int sizeof_int = sizeof(myint);
-const int sizeof_real = sizeof(real);
-const int sizeof_string = sizeof(string);
-
 #define RAMMAX 100000
 char ram[RAMMAX];
 int ramtot = 0;
@@ -213,8 +209,6 @@ public:
 	}
 };
 
-const int sizeof_function = sizeof(function);
-
 class name {		//查询标识/第一关键字
 	int l;				//标识字符串长度
 	char v[9];			//标识字符串
@@ -257,25 +251,25 @@ struct mydata {		//数据存储结构
 		if (type == INT) {
 			ram[ramtot++] = 1;
 			p = ramtot;
-			ramtot += sizeof_int;
-			memset(ram + p, 0, sizeof_int);
+			ramtot += sizeof(myint);
+			memset(ram + p, 0, sizeof(myint));
 		}
 		else if (type == REAL) {
 			ram[ramtot++] = 1;
 			p = ramtot;
-			ramtot += sizeof_real;
-			memset(ram + p, 0, sizeof_real);
+			ramtot += sizeof(real);
+			memset(ram + p, 0, sizeof(real));
 		}
 		else if (type == STRING) {
 			ram[ramtot++] = 1;
 			p = ramtot;
-			ramtot += sizeof_string;
-			memset(ram + p, 0, sizeof_string);
+			ramtot += sizeof(string);
+			memset(ram + p, 0, sizeof(string));
 		}
 		else if (type == FUNCTION) {
 			ram[ramtot++] = 1;
 			p = ramtot;
-			ramtot += sizeof_function;
+			ramtot += sizeof(function);
 			((function*)(ram + p))->init();
 		}
 		deep = now;

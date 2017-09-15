@@ -1,39 +1,5 @@
-
-
-int main()
-{ 
-   real a,b,c,d;
-   a=3.5;
-   b=4.3;
-   c=5.3;
-   d=6.7;
-   real result;
-   result=a+b-c+d;
-   out "3.5 + 4.3 - 5.3 + 6.7 = ",result;//9.200000
-   out "\n";
-   result=a+(b+c)-d;
-   out "3.5 + ( 4.3 + 5.3 ) - 6.7 = ",result;//6.400000
-   out "\n";
-   result=a+b*c-d;
-   out "3.5 + 4.3 * 5.3 - 6.7 = ",result;//19.590000
-   out "\n";
-   result=a*b+c/d;
-   out "3.5 * 4.3 + 5.3 / 6.7 = ",result;//15.841044
-   out "\n";
-   result=a+b-c*d;
-   out "3.5 + 4.3 - 5.3 * 6.7 = ",result;//-27.70999
-   out "\n";
-   result=(a+b)*c/d;
-   out "( 3.5 + 4.3 ) * 5.3 / 6.7 = ",result;//6.170149
-   out "\n";
-  //  result=a*b+c%d;
-  // out "3.5 * 4.3 + 5.3 % 6.7 = ",result;
-  // out "\n";
-   result=(a*(b+c))/d;
-   out "( 3.5 * ( 4.3 + 5.3 ) ) / 6.7 = ",result;//5.014925
-   out "\n";
-   //result=a%2+b*c-d;
-   //out "3.5 % 2 + 4.3 * 5.3 - 6.7 = ",result;
-   //out "\n";
-   return 0;
+int main(){
+	string a = "10000";
+	out a;
+	return 0;
 }
