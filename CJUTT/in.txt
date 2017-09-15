@@ -1,35 +1,8 @@
 int main()
-
-
 {
-	i = 2;
-	int sdajisd;
-	if i == 2
-	{
-
-		sdajisd = f();
-
-	}
-	out sdajisd;
-	while i <= 3
-	{
-		sdajisd = 1;
-		i = i + 1;
-	}
-	out sdajisd;
-	do
-	{
-		sdajisd = 2;
-		i = i + 1;
-	}
-	until i >= 4;
-
-	out sdajisd;
-	return 0;
-
-}
-
-f()
-{
-	return 0;
+  string s = "abcdef";
+  //in s;
+  out s;
+  out "\n";
+  return 0;
 }

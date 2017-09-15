@@ -75,18 +75,22 @@ public:
 	friend token operator/(token a, token b)
 	{
 		if ((a.type != INT && a.type != REAL) || (b.type != INT && b.type != REAL)) {
-			std::cout << "类型不能作此除法计算。" << std::endl;
+			std::cerr << "类型不能作此除法计算。" << std::endl;
 			exit(0);
 			return token();
 		}
 		else if (a.type == INT && b.type == INT) {
 			if (b.value == "0") {
-				std::cout << "Error:除数为0" << std::endl;
+				std::cerr << "Error:除数为0" << std::endl;
 				exit(0);
 			}
 			return token(INT, a.toString(a._toInt(a.value) / b._toInt(b.value)));
 		}
 		else {
+			if (b._toFloat(b.value) == 0) {
+				std::cerr << "Error:除数为0" << std::endl;
+				exit(0);
+			}
 			return token(REAL, a.toString(a._toFloat(a.value) / b._toFloat(b.value)));
 		}
 	}

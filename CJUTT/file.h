@@ -97,7 +97,7 @@ private:
 					}
 				}
 				if (!s.empty()) {
-					std::cout << "圆括号不匹配" << std::endl;
+					std::cerr << "圆括号不匹配" << std::endl;
 					exit(0);
 				}
 				nex.push_back(solve(temp));
@@ -116,7 +116,7 @@ private:
 		for (i = buf.size() - 1; i >= 0; i--) {
 			if (buf[i].type == ASSIGN) {
 				if (i - 1 < 0 || buf[i - 1].type != VARIABLE) {
-					std::cout << "等号左边不是可修改的左值" << std::endl;
+					std::cerr << "等号左边不是可修改的左值" << std::endl;
 					exit(0);
 				}
 				std::vector<token> _right;
@@ -155,7 +155,7 @@ private:
 				if (buf[i].type == ADD) {
 					flag = 0;
 					if (i + 1 >= buf.size()) {
-						std::cout << "单独的+号" << std::endl;
+						std::cerr << "单独的+号" << std::endl;
 						exit(0);
 					}
 					continue;
@@ -164,7 +164,7 @@ private:
 					flag = 0;
 					i++;
 					if (i >= buf.size()) {
-						std::cout << "单独的-号" << std::endl;
+						std::cerr << "单独的-号" << std::endl;
 						exit(0);
 					}
 					token cur;
@@ -183,7 +183,7 @@ private:
 					nex.push_back(buf[i]);
 					flag = isCal(buf[i]);
 					/*if (flag) {
-					std::cout << "连续的运算符" << std::endl;
+					std::cerr << "连续的运算符" << std::endl;
 					exit(0);
 					}*/
 				}
@@ -203,7 +203,7 @@ private:
 		for (i = buf.size() - 1; i >= 0; i--) {
 			if (buf[i].type == NOT) {
 				if (i + 1 >= buf.size() || (buf[i + 1].type != VARIABLE && buf[i + 1].type != FUNCTION && buf[i + 1].type != INT && buf[i + 1].type != REAL)) {
-					std::cout << "非号错误" << std::endl;
+					std::cerr << "非号错误" << std::endl;
 					exit(0);
 				}
 				int j = i + 1;
@@ -244,17 +244,17 @@ private:
 		for (i = 0; i < buf.size(); i++) {
 			if (buf[i].type == STRDEL) {
 				if (nex.size() == 0) {
-					std::cout << "非法的#运算" << std::endl;
+					std::cerr << "非法的#运算" << std::endl;
 					exit(0);
 				}
 				token cur = nex[nex.size() - 1];
 				if (i <= 0 || cur.type != STRING) {
-					std::cout << "非法的#运算" << std::endl;
+					std::cerr << "非法的#运算" << std::endl;
 					exit(0);
 				}
 				else {
 					if (nex[nex.size() - 1].value.size() == 0) {
-						std::cout << "非法的#运算:字符串已经为空" << std::endl;
+						std::cerr << "非法的#运算:字符串已经为空" << std::endl;
 						exit(0);
 					}
 					int si = nex[nex.size() - 1].value.size();
@@ -270,6 +270,9 @@ private:
 						else {
 							nex[nex.size() - 1].value.resize(si - 1);
 						}
+					}
+					else {
+						nex[nex.size() - 1].value.resize(si - 1);
 					}
 				}
 				break;
@@ -318,7 +321,7 @@ private:
 					break;
 				}
 				else {
-					std::cout << "非法的乘方运算" << std::endl;
+					std::cerr << "非法的乘方运算" << std::endl;
 					exit(0);
 					return token();
 				}
@@ -405,7 +408,7 @@ private:
 					q.pop_front();
 					q.push_front(pre + cur);
 					if (pre.type == STRING && cur.type == STRING) {
-						std::cout << "字符串不能作+运算" << std::endl;
+						std::cerr << "字符串不能作+运算" << std::endl;
 						exit(0);
 					}
 				}
@@ -423,7 +426,7 @@ private:
 						q.push_front(pre + cur);
 					}
 					else {
-						std::cout << "$两边只能是字符串" << std::endl;
+						std::cerr << "$两边只能是字符串" << std::endl;
 						exit(0);
 					}
 				}
@@ -568,7 +571,7 @@ private:
 			return q.front();
 		}
 		else {
-			std::cout << "不是合法的算式" << std::endl;
+			std::cerr << "不是合法的算式" << std::endl;
 			exit(0);
 		}
 	}
@@ -581,10 +584,9 @@ private:
 		}
 		else if (right.type == REAL) {
 			x = tofloat(right.value);
-			std::cout << "warn:float转换到int" << std::endl;
 		}
 		else {
-			std::cout << "类型不匹配。" << std::endl;
+			std::cerr << "类型不匹配。" << std::endl;
 			exit(0);
 		}
 		return right;
@@ -600,7 +602,7 @@ private:
 			x = tofloat(right.value);
 		}
 		else {
-			std::cout << "类型不匹配。" << std::endl;
+			std::cerr << "类型不匹配。" << std::endl;
 			exit(0);
 		}
 		return right;
@@ -613,7 +615,7 @@ private:
 			x = right.value;
 		}
 		else {
-			std::cout << "类型不匹配。" << std::endl;
+			std::cerr << "类型不匹配。" << std::endl;
 			exit(0);
 		}
 		return right;
@@ -623,7 +625,7 @@ private:
 		int flag = 0;
 		token cur;
 		if (x.type != VARIABLE) {
-			std::cout << "等号左边不是可修改的左值。" << std::endl;
+			std::cerr << "等号左边不是可修改的左值。" << std::endl;
 			exit(0);
 		}
 		else {
@@ -686,7 +688,7 @@ private:
 		// 把变量(和函数)转换成常数
 		mydata* curdata = vardb.find(name(_var.value));
 		if (curdata == NULL) {
-			std::cout << "尚未声明的变量。" << std::endl;
+			std::cerr << "尚未声明的变量。" << std::endl;
 			exit(0);
 		}
 		else {
@@ -731,7 +733,7 @@ private:
 				flag = 1;
 				cur = solve(temp);
 				if (cur.value == "") {
-					std::cout << "函数参数传递错误" << std::endl;
+					std::cerr << "函数参数传递错误" << std::endl;
 					exit(0);
 				}
 				else if (cur.type == INT) {
@@ -774,21 +776,21 @@ private:
 			}
 		}
 		else if (flag) {
-			std::cout << "函数参数传递错误" << std::endl;
+			std::cerr << "函数参数传递错误" << std::endl;
 			exit(0);
 		}
 		mydata* x = vardb.find(name(funName));
 		if (x == NULL) {
-			std::cout << "未声明的函数名" << std::endl;
+			std::cerr << "未声明的函数名" << std::endl;
 			exit(0);
 		}
 		if (x->type != FUNCTION) {
-			std::cout << "该名称不是函数" << std::endl;
+			std::cerr << "该名称不是函数" << std::endl;
 			exit(0);
 		}
 		function *f = x->tofunction().find(par);
 		if (f == NULL) {
-			std::cout << "函数参数类型不匹配" << std::endl;
+			std::cerr << "函数参数类型不匹配" << std::endl;
 			exit(0);
 		}
 		/*for (int i = 0; i < parparpar.size(); i++) {
@@ -804,7 +806,7 @@ private:
 		for (int i = 0; i < str.size(); i++) {
 			if (str[i] == '\\') {
 				if (i == str.size() - 1) {
-					std::cout << "illegal string" << std::endl;
+					std::cerr << "illegal string" << std::endl;
 					exit(0);
 				}
 				if (str[i + 1] == 'n') {
@@ -831,7 +833,7 @@ private:
 					i++;
 				}
 				else {
-					std::cout << "illegal string" << std::endl;
+					std::cerr << "illegal string" << std::endl;
 					exit(0);
 				}
 			}
@@ -984,20 +986,20 @@ private:
 			case STRING:
 				strout(buf[1].value); break;
 			case REAL:
-				std::cout << "重复输出次数不能为浮点型" << std::endl;
+				std::cerr << "重复输出次数不能为浮点型" << std::endl;
 				exit(0);
 				break;
 			case VARIABLE:
 				mydata* temp_data1 = vardb.find(name(buf[1].value));
 				if (temp_data1 == NULL || temp_data1->type != INT) {
-					std::cout << "illegal variable" << std::endl;
+					std::cerr << "illegal variable" << std::endl;
 					exit(0);
 				}
 				myint &t = temp_data1->toint();
 				pt = t;
 			}
 			if (pt < 0) {
-				std::cout << "无法负数次输出" << std::endl;
+				std::cerr << "无法负数次输出" << std::endl;
 				exit(0);
 			}
 			for (int i = 0; i < pt; i++)
@@ -1010,7 +1012,7 @@ private:
 			else {
 				mydata* temp_data1 = vardb.find(name(buf[1].value));
 				if (temp_data1 == NULL || temp_data1->type != INT) {
-					std::cout << "illegal variable" << std::endl;
+					std::cerr << "illegal variable" << std::endl;
 					exit(0);
 				}
 				myint &t = temp_data1->toint();
@@ -1020,14 +1022,14 @@ private:
 			strout(buf[3].value);
 
 			if (pt < 0) {
-				std::cout << "无法负数次输出" << std::endl;
+				std::cerr << "无法负数次输出" << std::endl;
 				exit(0);
 			}
 
 			for (int i = 0; i < pt; i++)
 				std::cout << buf[5].value;
 		default:
-			std::cout << "不是合法的输出语句" << std::endl;
+			std::cerr << "不是合法的输出语句" << std::endl;
 			exit(0);
 			break;
 		}
@@ -1042,7 +1044,7 @@ private:
 				temp.push_back(buf[i]);
 			}
 			else {
-				std::cout << "声明的不是变量" << std::endl;
+				std::cerr << "声明的不是变量" << std::endl;
 				exit(0);
 			}
 			i++;
@@ -1066,7 +1068,7 @@ class breakpoint {
 	}
 	bool reset(int x) {
 		if (x < 0 || x >= 200) {
-			std::cout << "断点行号不合法" << std::endl;
+			std::cerr << "断点行号不合法" << std::endl;
 			return 0;
 		}
 		brp[x] = 0;
@@ -1074,7 +1076,7 @@ class breakpoint {
 	}
 	bool set(int x) {
 		if (x < 0 || x >= 200) {
-			std::cout << "断点行号不合法" << std::endl;
+			std::cerr << "断点行号不合法" << std::endl;
 			return 0;
 		}
 		brp[x] = 1;
@@ -1099,7 +1101,7 @@ class breakpoint {
 				break;
 			}
 			else {
-				std::cout << "输入不合法\n";
+				std::cerr << "输入不合法\n";
 			}
 		}
 	}
@@ -1122,7 +1124,7 @@ class breakpoint {
 				break;
 			}
 			else {
-				std::cout << "输入不合法\n";
+				std::cerr << "输入不合法\n";
 			}
 		}
 	}
@@ -1133,7 +1135,7 @@ class breakpoint {
 		std::cin >> temp;
 		x = vardb.find(temp);
 		if (x == NULL) {
-			std::cout << "变量未定义" << std::endl;
+			std::cerr << "变量未定义" << std::endl;
 		}
 		else {
 			x->out();
@@ -1163,7 +1165,7 @@ public:
 				exit(0);
 			}
 			else {
-				std::cout << "输入不合规范,请重新输入\n";
+				std::cerr << "输入不合规范,请重新输入\n";
 			}
 		}
 	}
@@ -1189,7 +1191,7 @@ public:
 				exit(0);
 			}
 			else {
-				std::cout << "输入不合规范,请重新输入\n";
+				std::cerr << "输入不合规范,请重新输入\n";
 			}
 		}
 	}
@@ -1209,12 +1211,12 @@ private:
 				break;
 		}
 		if (buf.size() != 3 && buf.size() != 2) {
-			std::cout << "函数声明有误" << std::endl;
+			std::cerr << "函数声明有误" << std::endl;
 			exit(0);
 		}
 		else if (buf.size() != 3) {
 			if (buf[0].type != FUNCTION || buf[1].type != CBRACKET) {
-				std::cout << "函数声明有误" << std::endl;
+				std::cerr << "函数声明有误" << std::endl;
 				exit(0);
 			}
 			else {
@@ -1244,17 +1246,17 @@ private:
 						pra.push_back(STRING);
 					}
 					else {
-						std::cout << "函数声明有误" << std::endl;
+						std::cerr << "函数声明有误" << std::endl;
 						exit(0);
 					}
 
 					if (sc.end()) {
-						std::cout << "函数声明有误" << std::endl;
+						std::cerr << "函数声明有误" << std::endl;
 						exit(0);
 					}
 					cur = sc.next();
 					if (cur.type != VARIABLE) {
-						std::cout << "函数声明有误" << std::endl;
+						std::cerr << "函数声明有误" << std::endl;
 						exit(0);
 					}
 
@@ -1263,7 +1265,7 @@ private:
 					}
 					cur = sc.next();
 					if (cur.value != ",") {
-						std::cout << "函数声明有误" << std::endl;
+						std::cerr << "函数声明有误" << std::endl;
 						exit(0);
 					}
 				}
@@ -1276,7 +1278,7 @@ private:
 			}
 		}
 		else if ((buf[0].value != "int") && (buf[0].value != "real") && (buf[0].value != "string") || buf[1].type != FUNCTION || buf[2].type != CBRACKET) {
-			std::cout << "函数声明有误" << std::endl;
+			std::cerr << "函数声明有误" << std::endl;
 			exit(0);
 		}
 		else {
@@ -1306,17 +1308,17 @@ private:
 					pra.push_back(STRING);
 				}
 				else {
-					std::cout << "函数声明有误" << std::endl;
+					std::cerr << "函数声明有误" << std::endl;
 					exit(0);
 				}
 
 				if (sc.end()) {
-					std::cout << "函数声明有误" << std::endl;
+					std::cerr << "函数声明有误" << std::endl;
 					exit(0);
 				}
 				cur = sc.next();
 				if (cur.type != VARIABLE) {
-					std::cout << "函数声明有误" << std::endl;
+					std::cerr << "函数声明有误" << std::endl;
 					exit(0);
 				}
 
@@ -1325,7 +1327,7 @@ private:
 				}
 				cur = sc.next();
 				if (cur.value != ",") {
-					std::cout << "函数声明有误" << std::endl;
+					std::cerr << "函数声明有误" << std::endl;
 					exit(0);
 				}
 			}
@@ -1378,7 +1380,7 @@ public:
 				exit(0);
 			}
 			else {
-				std::cout << "输入不合规范,请重新输入\n";
+				std::cerr << "输入不合规范,请重新输入\n";
 			}
 		}
 	}
@@ -1510,21 +1512,21 @@ inline int function::run() {
 	vardb.deletefloor();
 	debug.pop();
 	if (ans == None) {
-		std::cout << "函数无返回值" << std::endl;
+		std::cerr << "函数无返回值" << std::endl;
 		exit(0);
 	}
 	if (ans == CONTINUE) {
-		std::cout << "continue无对应的匹配" << std::endl;
+		std::cerr << "continue无对应的匹配" << std::endl;
 		exit(0);
 	}
 	if (ans == BREAK) {
-		std::cout << "break无对应的匹配" << std::endl;
+		std::cerr << "break无对应的匹配" << std::endl;
 		exit(0);
 	}
 	token t = stk.pop();
 	if (t.type != type) {
 		if (t.type == STRING ^type == STRING) {
-			std::cout << "函数返回类型无法转换" << std::endl;
+			std::cerr << "函数返回类型无法转换" << std::endl;
 			stk.add(t);
 			exit(0);
 		}
@@ -1600,34 +1602,63 @@ inline void strtosta(std::string str, std::vector<statement> &sta) {		//将一段字
 			i++;
 		}
 		else if (sc.v[i].value == "if") {
-			int j = i + 1;
+			int j = i + 1, l = i, r = i;
 			std::vector<token> temp;
-			while (j < sc.v.size() && sc.v[j].type != CBRACKET) {
+			while (j < sc.v.size() && sc.v[j].type != CBRACKET && sc.v[j].type != NEXTLINE) {
 				temp.push_back(sc.v[j]);
 				j++;
 			}
-			if (j + 2 < sc.v.size() && sc.v[j].type == CBRACKET && sc.v[j + 1].value == "else" && sc.v[j + 2].type != CBRACKET) {
-				std::cout << "else后面抹油大括号" << std::endl;
+			if (temp.size() == 0) {
+				std::cerr << "if语句错误:if后面抹油判断式" << std::endl;
 				exit(0);
 			}
-			else if (j + 2 < sc.v.size() && sc.v[j].type == CBRACKET && sc.v[j + 1].value == "else" && sc.v[j + 2].type == CBRACKET) {
-				sta.push_back(statement(line, scan(temp).toString(), sc.v[j].value, sc.v[j + 2].value));
-				i = j + 3;
+			while (j < sc.v.size() && sc.v[j].type == NEXTLINE) {
+				j++;
 			}
-			else if (j < sc.v.size() && sc.v[j].type == CBRACKET) {
-				sta.push_back(statement(line, scan(temp).toString(), sc.v[j].value, ""));
-				i = j + 1;
+			if (j < sc.v.size() && sc.v[j].type == CBRACKET) {
+				l = j;
+				j++;
+				while (j < sc.v.size() && sc.v[j].type == NEXTLINE) {
+					j++;
+				}
+				if (sc.v[j].value == "else") {
+					j++;
+					while (j < sc.v.size() && sc.v[j].type == NEXTLINE) {
+						j++;
+					}
+					r = j;
+					if (j < sc.v.size() && sc.v[j].type == CBRACKET) {
+						sta.push_back(statement(line, scan(temp).toString(), sc.v[l].value, sc.v[r].value));
+						i = j + 1;
+					}
+					else {
+						std::cerr << "if语句错误:else后面抹油大括号" << std::endl;
+						exit(0);
+					}
+				}
+				// if 后 没有 else
+				else {
+					sta.push_back(statement(line, scan(temp).toString(), sc.v[l].value, ""));
+					i = j;
+				}
 			}
 			else {
-				std::cout << "if语句错误" << std::endl;
+				std::cerr << "if语句错误:if后面抹油大括号" << std::endl;
 				exit(0);
 			}
 		}
 		else if (sc.v[i].value == "while") {
 			int j = i + 1;
 			std::vector<token> temp;
-			while (j < sc.v.size() && sc.v[j].type != CBRACKET) {
+			while (j < sc.v.size() && sc.v[j].type != CBRACKET && sc.v[j].type != NEXTLINE) {
 				temp.push_back(sc.v[j]);
+				j++;
+			}
+			if (temp.size() == 0) {
+				std::cerr << "while语句错误:while后面抹油判断式" << std::endl;
+				exit(0);
+			}
+			while (j < sc.v.size() && sc.v[j].type == NEXTLINE) {
 				j++;
 			}
 			if (j < sc.v.size() && sc.v[j].type == CBRACKET) {
@@ -1635,7 +1666,7 @@ inline void strtosta(std::string str, std::vector<statement> &sta) {		//将一段字
 				i = j + 1;
 			}
 			else {
-				std::cout << "while语句错误" << std::endl;
+				std::cerr << "while语句错误:while后抹油大括号" << std::endl;
 				exit(0);
 			}
 		}
@@ -1656,7 +1687,7 @@ inline void strtosta(std::string str, std::vector<statement> &sta) {		//将一段字
 			}
 			i++;
 			if (i >= sc.v.size()) {
-				std::cout << "do until语句错误" << std::endl;
+				std::cerr << "do until语句错误" << std::endl;
 				exit(0);
 			}
 			else {
