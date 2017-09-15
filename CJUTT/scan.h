@@ -17,7 +17,6 @@ public:
 	scan(std::string _buf) {
 		pos = 0;
 		v = stringToVectorToken(_buf);
-		int x = 0;
 	}
 	scan(std::vector<token> _v) {
 		pos = 0;
@@ -40,7 +39,10 @@ public:
 	std::string firstToString(std::string);
 };
 
-inline bool scan::end() { return pos >= v.size(); }
+inline bool scan::end() 
+{ 
+	return pos >= v.size(); 
+}
 
 inline token scan::next() {
 	skip_whitespace();

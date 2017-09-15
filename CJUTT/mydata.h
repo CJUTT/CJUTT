@@ -54,14 +54,14 @@ bool strisempty(std::string &str) {
 
 void strtotoken(std::string str, std::vector<token> &tok);		//将一句字符串解析为token组
 
-class minstatement{
+class minstatement {
 private:
 	int line;
 	std::vector<token> tok;
 public:
 	bool judge();		//判断语句返回值是否为真
 	void runinit();		//执行声明，并从队列中取值初始化
-	void init(std::string str,int _line) {
+	void init(std::string str, int _line) {
 		memset(this, 0, sizeof(minstatement));
 		line = _line;
 		strtotoken(str, tok);
@@ -69,12 +69,12 @@ public:
 	int run();
 };
 
-class statement{
+class statement {
 private:
 	int type;
 	int p;
 public:
-	statement(std::string one,int _line) {
+	statement(std::string one, int _line) {
 		type = MINSTATEMENT;
 		ram[ramtot++] = 1;
 		p = ramtot;
@@ -95,12 +95,12 @@ public:
 
 void strtosta(std::string str, std::vector<statement> &sta);	//将一段字符串解析为语句组
 
-class mywhile{
+class mywhile {
 private:
 	minstatement judge;
 	std::vector<statement>sta;
 public:
-	void init(std::string _judge, std::string s,int _line) {
+	void init(std::string _judge, std::string s, int _line) {
 		memset(this, 0, sizeof(mywhile));
 		if (strisempty(_judge)) {
 			std::cerr << "判断式不可为空" << std::endl;
@@ -118,24 +118,24 @@ private:
 	std::vector<statement>sta;
 	minstatement judge;
 public:
-	void init(std::string s, std::string _judge,int _line) {
+	void init(std::string s, std::string _judge, int _line) {
 		memset(this, 0, sizeof(dountil));
 		strtosta(s, sta);
 		if (strisempty(_judge)) {
 			std::cerr << "判断式不可为空" << std::endl;
 			exit(0);
 		}
-		judge.init(_judge,_line);
+		judge.init(_judge, _line);
 	}
 	int run();
 };
 
-class ifelse{
+class ifelse {
 private:
 	minstatement judge;
 	std::vector<statement>first, second;
 public:
-	void init(std::string _judge,int _line, std::string one, std::string two){
+	void init(std::string _judge, int _line, std::string one, std::string two) {
 		memset(this, 0, sizeof(ifelse));
 		if (strisempty(_judge)) {
 			std::cerr << "判断式不可为空" << std::endl;
@@ -148,7 +148,7 @@ public:
 	int run();
 };
 
-class function{				//INT，REAL，STRING的type必须是0,1,2,None表示空
+class function {				//INT，REAL，STRING的type必须是0,1,2,None表示空
 private:
 	function* next[3];
 public:
@@ -184,7 +184,7 @@ public:
 			strtosta(s, temp->sta);
 		}
 		else {
-			//函数重定义
+			std::cerr << "函数重定义" << std::endl;
 			exit(0);
 		}
 	}
@@ -270,7 +270,12 @@ struct mydata {		//数据存储结构
 			ram[ramtot++] = 1;
 			p = ramtot;
 			ramtot += sizeof_string;
-			memset(ram + p, 0, sizeof_string);
+			std::string a;
+			std::string *b = &a;
+			for (int i = 0; i < sizeof(std::string); i++) {
+				ram[p + i] = *(((char*)b) + i);
+			}
+			//memset(ram + p, 0, sizeof_string);
 		}
 		else if (type == FUNCTION) {
 			ram[ramtot++] = 1;
@@ -397,7 +402,7 @@ inline int statement::run() {
 		return ((mywhile*)(ram + p))->run();
 	else if (type == IFELSE)
 		return ((ifelse*)(ram + p))->run();
-	else if(type==DOUNTIL)
+	else if (type == DOUNTIL)
 		return ((dountil*)(ram + p))->run();
 }
 
