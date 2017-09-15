@@ -87,11 +87,13 @@ inline std::vector<token> scan::stringToVectorToken(std::string buf)
 				v.push_back(token(KEY, str));
 			}
 			else {
+				while (buf[i] == ' ')
+					i++;
 				if (buf[i] == '(') {
 					int flag = 1;
 					str.append(1, buf[i]);
 					i++;
-					while (i < buf.size() && flag && buf[i] != '\n') {
+					while (i < buf.size() && flag && buf[i] != '@') {
 						if (buf[i] == '(')
 							flag++;
 						else if (buf[i] == ')')
@@ -103,7 +105,7 @@ inline std::vector<token> scan::stringToVectorToken(std::string buf)
 						v.push_back(token(FUNCTION, str));
 					}
 					else {
-						std::cout << "函数后匹配不到右括号" << std::endl;
+						std::cerr << "函数后匹配不到右括号" << std::endl;
 						exit(0);
 					}
 				}
@@ -136,12 +138,12 @@ inline std::vector<token> scan::stringToVectorToken(std::string buf)
 		else if (buf[i] == '"') {
 			i++;
 			std::string str = "";
-			while (buf[i] != '\"' && buf[i] != '\n' && i < buf.size()) {
+			while (buf[i] != '\"' && buf[i] != '@' && i < buf.size()) {
 				if (buf[i] == '\\') {
 					str.append(1, buf[i]);
 					i++;
 					if (buf[i] != '\"' && buf[i] != '0' && buf[i] != 'n' && buf[i] != 't' && buf[i] != '\\' && buf[i] != '\'') {
-						std::cout << "单独的'\\', 非法字符" << std::endl;
+						std::cerr << "单独的'\\', 非法字符" << std::endl;
 						exit(0);
 					}
 					else {
@@ -159,7 +161,7 @@ inline std::vector<token> scan::stringToVectorToken(std::string buf)
 				i++;
 			}
 			else {
-				std::cout << "非法的字符串" << std::endl;
+				std::cerr << "非法的字符串" << std::endl;
 				exit(0);
 			}
 		}
@@ -167,7 +169,7 @@ inline std::vector<token> scan::stringToVectorToken(std::string buf)
 		else if (buf[i] == '/') {
 			i++;
 			if (i < buf.size() && buf[i] == '/') {
-				while (i < buf.size() && buf[i] != '\n') {
+				while (i < buf.size() && buf[i] != '@') {
 					i++;
 				}
 			}
@@ -233,7 +235,7 @@ inline std::vector<token> scan::stringToVectorToken(std::string buf)
 		else if (buf[i] == '|') {
 			i++;
 			if (i >= buf.size() || buf[i] != '|') {
-				std::cout << "单个|号" << std::endl;
+				std::cerr << "单个|号" << std::endl;
 				exit(0);
 			}
 			else {
@@ -245,7 +247,7 @@ inline std::vector<token> scan::stringToVectorToken(std::string buf)
 		else if (buf[i] == '&') {
 			i++;
 			if (i >= buf.size() || buf[i] != '&') {
-				std::cout << "单个&号" << std::endl;
+				std::cerr << "单个&号" << std::endl;
 				exit(0);
 			}
 			else {
@@ -301,7 +303,7 @@ inline std::vector<token> scan::stringToVectorToken(std::string buf)
 				}
 			}
 			if (!s.empty()) {
-				std::cout << "大括号不匹配" << std::endl;
+				std::cerr << "大括号不匹配" << std::endl;
 				exit(0);
 			}
 			v.push_back(token(CBRACKET, str));
@@ -332,7 +334,7 @@ inline std::vector<token> scan::stringToVectorToken(std::string buf)
 		}
 		else {
 			// 非法字符 抛出错误
-			std::cout << "非法字符" << std::endl;
+			std::cerr << "非法字符" << std::endl;
 			exit(0);
 		}
 	}
@@ -366,7 +368,7 @@ inline std::string scan::firstToString(std::string s)
 {
 	for (int i = 0; i < s.size(); i++) {
 		if (s[i] == '@') {
-			std::cout << "非法字符@" << std::endl;
+			std::cerr << "非法字符@" << std::endl;
 			exit(0);
 		}
 	}

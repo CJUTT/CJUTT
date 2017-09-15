@@ -85,7 +85,7 @@ public:
 	statement(int _line, std::string one, std::string two, std::string three);
 	void init() {		//执行声明，并从队列中取值初始化
 		if (type != MINSTATEMENT) {
-			std::cout << "执行声明语句类型不符" << std::endl;
+			std::cerr << "执行声明语句类型不符" << std::endl;
 			exit(0);
 		}
 		((minstatement*)(ram + p))->runinit();
@@ -103,7 +103,7 @@ public:
 	void init(std::string _judge, std::string s,int _line) {
 		memset(this, 0, sizeof(mywhile));
 		if (strisempty(_judge)) {
-			std::cout << "判断式不可为空" << std::endl;
+			std::cerr << "判断式不可为空" << std::endl;
 			exit(0);
 		}
 		sta.clear();
@@ -122,7 +122,7 @@ public:
 		memset(this, 0, sizeof(dountil));
 		strtosta(s, sta);
 		if (strisempty(_judge)) {
-			std::cout << "判断式不可为空" << std::endl;
+			std::cerr << "判断式不可为空" << std::endl;
 			exit(0);
 		}
 		judge.init(_judge,_line);
@@ -138,7 +138,7 @@ public:
 	void init(std::string _judge,int _line, std::string one, std::string two){
 		memset(this, 0, sizeof(ifelse));
 		if (strisempty(_judge)) {
-			std::cout << "判断式不可为空" << std::endl;
+			std::cerr << "判断式不可为空" << std::endl;
 			exit(0);
 		}
 		judge.init(_judge, _line);
@@ -306,7 +306,7 @@ struct mydata {		//数据存储结构
 			std::cout << *((string*)(ram + p)) << std::endl;
 		}
 		else if (type == FUNCTION) {
-			std::cout << "函数无法显示" << std::endl;
+			std::cerr << "函数无法显示" << std::endl;
 		}
 	}
 	~mydata() {
@@ -417,7 +417,7 @@ inline statement::statement(int _line, std::string one, std::string two, int _ty
 		((dountil*)(ram + p))->init(one, two, _line);
 	}
 	else {
-		std::cout << "语句类型不符" << std::endl;
+		std::cerr << "语句类型不符" << std::endl;
 		exit(0);
 	}
 }
