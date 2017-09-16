@@ -1353,6 +1353,7 @@ public:
 	std::string str;
 	int tot;
 	file(std::string fname) :tot(0) {
+		totinit();
 		vardb.newfloor();
 		std::ifstream in;
 		in.open(fname, std::ios::in);
@@ -1419,13 +1420,13 @@ inline int mywhile::run() {
 	int ans = None;
 	while (1) {
 		debug.add();
-		if (!judge.judge()) {
+		if (!ramminstatement[judge].judge()) {
 			debug.pop();
 			break;
 		}
 		vardb.newfloor();
-		for (int i = 0; i < sta.size(); i++) {
-			ans = sta[i].run();
+		for (int i = ramlink[sta].next; i != -1; i=ramlink[i].next) {
+			ans = ramstatement[ramlink[i].v].run();
 			if (ans == CONTINUE || ans == BREAK || ans == RETURN)
 				break;
 		}
@@ -1450,8 +1451,8 @@ inline int dountil::run() {
 	do {
 		debug.add();
 		vardb.newfloor();
-		for (int i = 0; i < sta.size(); i++) {
-			ans = sta[i].run();
+		for (int i = ramlink[sta].next; i != -1; i = ramlink[i].next) {
+			ans = ramstatement[ramlink[i].v].run();
 			if (ans == CONTINUE || ans == BREAK || ans == RETURN)
 				break;
 		}
@@ -1468,7 +1469,7 @@ inline int dountil::run() {
 			debug.pop();
 			break;
 		}
-		if (judge.judge()) {
+		if (ramminstatement[judge].judge()) {
 			debug.pop();
 			break;
 		}
@@ -1479,18 +1480,18 @@ inline int dountil::run() {
 
 inline int ifelse::run() {
 	int ans = None;
-	if (judge.judge()) {
+	if (ramminstatement[judge].judge()) {
 		vardb.newfloor();
-		for (int i = 0; i < first.size(); i++) {
-			ans = first[i].run();
+		for (int i = ramlink[first].next; i != -1; i = ramlink[i].next) {
+			ans = ramstatement[ramlink[i].v].run();
 			if (ans == CONTINUE || ans == BREAK || ans == RETURN)
 				break;
 		}
 	}
 	else {
 		vardb.newfloor();
-		for (int i = 0; i < second.size(); i++) {
-			ans = second[i].run();
+		for (int i = ramlink[second].next; i != -1; i = ramlink[i].next) {
+			ans = ramstatement[ramlink[i].v].run();
 			if (ans == CONTINUE || ans == BREAK || ans == RETURN)
 				break;
 		}
@@ -1503,10 +1504,11 @@ inline int function::run() {
 	int ans = 0;
 	debug.add();
 	vardb.newfloor();
-	for (int i = 0; i < pnum; i++)
-		sta[i].init();
-	for (int i = pnum; i < sta.size(); i++) {
-		ans = sta[i].run();
+	int j = ramlink[sta].next;
+	for (int i = 0; i < pnum&&j != -1; i++, j = ramlink[j].next)
+		ramstatement[ramlink[j].v].init();
+	for (; j != -1; j=ramlink[j].next) {
+		ans = ramstatement[ramlink[j].v].run();
 		if (ans == CONTINUE || ans == BREAK || ans == RETURN)
 			break;
 	}
@@ -1587,7 +1589,7 @@ inline void strtotoken(std::string str, std::vector<token> &tok) {		//将一句字符
 }
 
 // if [judge], while [judge], until [judge] 必须在同一行233
-inline void strtosta(std::string str, std::vector<statement> &sta) {		//将一段字符串解析为语句组
+inline void strtosta(std::string str, int sta) {		//将一段字符串解析为语句组
 	scan sc = scan(str);
 	/*for (std::vector<token>::iterator it = sc.v.begin(); it != sc.v.end(); it++) {
 		while (it != sc.v.end() && (*it).type == NEXTLINE) {
@@ -1622,14 +1624,17 @@ inline void strtosta(std::string str, std::vector<statement> &sta) {		//将一段字
 				while (j < sc.v.size() && sc.v[j].type == NEXTLINE) {
 					j++;
 				}
-				if (sc.v[j].value == "else") {
+				if (j < sc.v.size() && sc.v[j].value == "else") {
 					j++;
 					while (j < sc.v.size() && sc.v[j].type == NEXTLINE) {
 						j++;
 					}
 					r = j;
 					if (j < sc.v.size() && sc.v[j].type == CBRACKET) {
-						sta.push_back(statement(line, scan(temp).toString(), sc.v[l].value, sc.v[r].value));
+						ramlink[sta].next = linktot++;
+						sta = ramlink[sta].next;
+						ramlink[sta].v = statementtot++;
+						ramstatement[ramlink[sta].v] = statement(line, scan(temp).toString(), sc.v[l].value, sc.v[r].value);
 						i = j + 1;
 					}
 					else {
@@ -1639,7 +1644,10 @@ inline void strtosta(std::string str, std::vector<statement> &sta) {		//将一段字
 				}
 				// if 后 没有 else
 				else {
-					sta.push_back(statement(line, scan(temp).toString(), sc.v[l].value, ""));
+					ramlink[sta].next = linktot++;
+					sta = ramlink[sta].next;
+					ramlink[sta].v = statementtot++;
+					ramstatement[ramlink[sta].v] = statement(line, scan(temp).toString(), sc.v[l].value, "");
 					i = j;
 				}
 			}
@@ -1663,7 +1671,10 @@ inline void strtosta(std::string str, std::vector<statement> &sta) {		//将一段字
 				j++;
 			}
 			if (j < sc.v.size() && sc.v[j].type == CBRACKET) {
-				sta.push_back(statement(line, scan(temp).toString(), sc.v[j].value, MYWHILE));
+				ramlink[sta].next = linktot++;
+				sta = ramlink[sta].next;
+				ramlink[sta].v = statementtot++;
+				ramstatement[ramlink[sta].v] = statement(line, scan(temp).toString(), sc.v[j].value, MYWHILE);
 				i = j + 1;
 			}
 			else {
@@ -1697,7 +1708,10 @@ inline void strtosta(std::string str, std::vector<statement> &sta) {		//将一段字
 					i++;
 				}
 				i++;
-				sta.push_back(statement(line, st.value, scan(temp).toString(), DOUNTIL));
+				ramlink[sta].next = linktot++;
+				sta = ramlink[sta].next;
+				ramlink[sta].v = statementtot++;
+				ramstatement[ramlink[sta].v] = statement(line, st.value, scan(temp).toString(), DOUNTIL);
 			}
 		}
 		else {
@@ -1707,7 +1721,10 @@ inline void strtosta(std::string str, std::vector<statement> &sta) {		//将一段字
 				i = i + 1;
 			}
 			i = i + 1;
-			sta.push_back(statement(scan(temp).toString(), line));
+			ramlink[sta].next = linktot++;
+			sta = ramlink[sta].next;
+			ramlink[sta].v = statementtot++;
+			ramstatement[ramlink[sta].v] = statement(scan(temp).toString(), line);
 		}
 	}
 }
