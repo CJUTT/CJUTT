@@ -1,5 +1,55 @@
-int main(){
-	string a = "10000";
-	out a;
-	return 0;
-}
+
+int main()
+{
+  int min,max,count,n,q,w,e,r;
+  out "start.\n";
+  while(1)
+  {
+    
+    in min;
+    in max;
+    count=0;
+    if (min==0)&&(max==0)
+      {return 0;}
+    else
+    {
+      if ((min>999)&&(min<10000))&&((max>999)&&(max<10000))&&(min<=max) 
+      { 
+        n=min;
+        while n<=max
+        {
+          if n%2==0 {
+            q=n/1000;
+            w=n%1000/100;
+            e=n%100/10;
+            r=n%10;
+          if (q<>w)&&(q<>e)&&(q<>r)&&(w<>e)&&(w<>r)&&(e<>r)
+           {count=count+1;
+            out n; out " ";}
+          }
+         n=n+1;
+        }
+        out "\n";
+        out "counter= ",count;
+        out "\n";
+        count=0;
+       }
+       else {out "Error\n";}
+    }
+   }
+  return 0;
+  //input:
+//3000 3020
+//output: 3012 3014 3016 3018 counter=4
+//input:
+//6040 6090
+//output:6042 6048 6052 6058 6072 6074 6078 6082 6084 counter=10
+//input :
+//9 101 
+//output:Error\n
+//87 -1
+//output:Error\n
+//0 0 ½áÊø
+} 
+
+

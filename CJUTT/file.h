@@ -1401,6 +1401,7 @@ public:
 				temp.push_back(sc.v[i]);
 			}
 		}
+		int x = 0;
 	}
 	void runmain() {
 		function fun;
